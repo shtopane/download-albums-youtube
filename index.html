@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Converter</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+</head>
+
+<body>
+    <div id="loader" class="hidden">
+        <div class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div id="container">
+        <h1 class="heading">Hello world</h1>
+        <div id="input-wrap">
+            <input class="URL-input" placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
+            <button class="convert-button">Send</button>
+        </div>
+        <div id="description-wrap">
+            <label for="description">
+                Paste a tracklist of the album.
+                The <strong>required information is track name and track time.</strong>
+                Exampe: Track1: 02:25
+                <strong>Look up in the description or the comment section of the video. Usually the tracklist is
+                    there.</strong>
+            </label>
+            <textarea name="description" id="description" rows="20"></textarea>
+        </div>
+    </div>
+    <script type="text/javascript" src="./script.js"></script>
+</body>
+
+</html>
