@@ -6,6 +6,7 @@
     const container = document.getElementById('container');
 
     convertBtn.addEventListener('click', function () {
+        let start = Date.now();
         const url = inputEl.value;
         const body = JSON.stringify({ playlist: textareaEl.value, url: url });
         loader.classList.remove('hidden');
@@ -19,6 +20,7 @@
         }).then(json => {
             loader.classList.add('hidden');
             container.classList.remove('blur');
+            console.log(`done in - ${(Date.now() - start) / 1000}s`);
 
             console.log('response from server', json);
             fetch('http://localhost:4000/playlist').then(playlist => console.log('playlist', playlist));
