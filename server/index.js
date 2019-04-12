@@ -9,7 +9,6 @@ const utils = require('./utils');
 const app = express();
 const port = 4000;
 
-
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -67,8 +66,12 @@ app.post('/songs', async (req, res) => {
         });
     let counter = 1;
     function storeFile(seekTime, duration, outputFileName) {
+        const outPutDir = `output/${fileTitle || 'album'}`;
+        if (!fs.existsSync(outPutDir)){
+            fs.mkdirSync(outPutDir);
+        }
         console.log(`Seektime : ${seekTime}, Duration: ${duration}, File: ${outputFileName}`);
-        let audioFileName = `output/${outputFileName}.mp3`;
+        let audioFileName = `${outPutDir}/${outputFileName}.mp3`;
         let stream = fs.createWriteStream(audioFileName);
         let start = Date.now();
         /** downloading the album every time? */
@@ -82,16 +85,19 @@ app.post('/songs', async (req, res) => {
             .duration(duration)
             .on('end', () => {
                 console.log('counter', counter);
-                if (counter >= playlistArr.length) {
+                /** if we reached the end of the tracklist or the tracklist is 2 of length(1 song out of the whole album?
+                 *  Remove if this is not logical at all.) */
+                if (counter >= playlistArr.length || playlistArr.length <= 2) {
                     console.log('NO MORE SONGS!');
 
                     res.sendStatus(200);
                 } else {
                     /** Put the end song endTime to be end of the file */
+                    const endSongTimeStr = `${videoLenghtObject.hours > 0 ? videoLenghtObject.hours + ':': ''}${videoLenghtObject.minutes}:${videoLenghtObject.seconds}`;
                     let songBegin = playlistArr[counter].songBegin;
                     let songEnd = playlistArr[counter + 1]
                         ? playlistArr[counter + 1].songBegin
-                        : `${videoLenghtObject.minutes}:${videoLenghtObject.seconds}`;
+                        : endSongTimeStr;
 
                     /** Calculate next song's duration */
                     let nextDuration = utils.getSecondsFromTimeString(lengthInSeconds, songBegin, songEnd);
