@@ -23,7 +23,7 @@
             console.log(`done in - ${(Date.now() - start) / 1000}s`);
 
             console.log('response from server', json);
-            fetch('http://localhost:4000/playlist').then(playlist => console.log('playlist', playlist));
+            fetch('http://localhost:4000/playlist').then(res => res.json()).then(data => console.log('data playlist', data));
             // window.location.href = `http://localhost:4000/download?URL=${url}`;
 
         })
@@ -39,4 +39,17 @@
             window.location.href = `http://localhost:4000/download?URL=${url}`;
         }
     }
+
+    const playlist = [
+        {
+          "songBegin": "00:30",
+          "songName": "First song",
+          "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
+        },
+        {
+          "songBegin": "02:50",
+          "songName": "Second song",
+          "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
+        }
+      ];
 })();
