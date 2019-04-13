@@ -25,6 +25,7 @@ let playlist = {};
 let url = '';
 let videoLenghtObject = {};
 let videoYoutubePath;
+let fileTitle = 'album';
 let playlistArr = [];
 let tumbnail;
 
@@ -36,7 +37,6 @@ app.post('/songs', async (req, res) => {
     console.log('playlistArr', playlistArr);
 
     const videoInfo = await ytdl.getInfo(url);
-    let fileTitle;
     let formats;
 
     // const isFull = videoInfo.full;
@@ -60,7 +60,7 @@ app.post('/songs', async (req, res) => {
         chosenFormat = ytdl.chooseFormat(formats, {});
     }
     videoLenghtObject = utils.getHoursFromSeconds(lengthInSeconds);
-    videoYoutubePath = `output/${fileTitle || 'album'}.avi`;
+    videoYoutubePath = `output/${fileTitle}.avi`;
     console.log('tumbnails', tumbnail);
     ytdl(url, {
         format: chosenFormat || 'avi',
@@ -68,7 +68,6 @@ app.post('/songs', async (req, res) => {
         .pipe(fs.createWriteStream(videoYoutubePath))
         .on('finish', () => {
             console.log('download completed!', 'color: red;');
-            // res.header('Content-Disposition', `attachment; filename="${fileTitle || 'song'}.mp3"`);
 
             duration = utils.getSecondsFromTimeString(lengthInSeconds, playlistArr[0].songBegin, playlistArr[1].songBegin);
 
@@ -77,7 +76,7 @@ app.post('/songs', async (req, res) => {
 
     let counter = 1;
     function storeFile(seekTime, duration, outputFileName) {
-        const outPutDir = `output/${fileTitle || 'album'}`;
+        const outPutDir = `output/${fileTitle}`;
         if (!fs.existsSync(outPutDir)){
             fs.mkdirSync(outPutDir);
         }
@@ -133,5 +132,25 @@ app.get('/playlist', (req, res) => {
         track.tumbnail = tumbnail;
     }
     console.log(playlistArr);
-    res.status(200).json({playlist: playlistArr.slice()});
+    console.log(fileTitle);
+    res.status(200).json({playlist: playlistArr.slice(), albumName: fileTitle});
+})
+
+app.get('/download', (req, res)=>{
+    const albumName = req.query.albumName;
+    const songName = req.query.songName;
+    console.log(albumName);
+    console.log(songName);
+    console.log(`output/${albumName}/${songName}.mp3`);
+    const folder = `output/${albumName}/${songName}.mp3`;
+    const file = `${songName}.mp3`;
+    // res.attachment(`output/${albumName}/${songName}.mp3`);
+    // res.header(`Content-Disposition', 'attachment; filename=output/${albumName}/${songName}.mp3`);
+    res.download(folder, file, (err) => {
+       if(!err) {
+           console.log('competed!');
+       } else{
+           console.log('error happened: ', err);
+       }
+    });
 })
