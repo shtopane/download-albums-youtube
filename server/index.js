@@ -9,8 +9,12 @@ const utils = require('./utils');
 const app = express();
 const port = 4000;
 
+const albumController = require('./controllers/album.controller');
+
+app.use(express.static(__dirname + '/output'));
 app.use(cors());
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
     console.log('Server on port: ' + port);
@@ -22,6 +26,8 @@ let url = '';
 let videoLenghtObject = {};
 let videoYoutubePath;
 let playlistArr = [];
+let tumbnail;
+
 app.post('/songs', async (req, res) => {
     playlist = req.body.playlist;
     url = req.body.url;
@@ -32,6 +38,7 @@ app.post('/songs', async (req, res) => {
     const videoInfo = await ytdl.getInfo(url);
     let fileTitle;
     let formats;
+
     // const isFull = videoInfo.full;
     let lengthInSeconds;
 
@@ -42,6 +49,9 @@ app.post('/songs', async (req, res) => {
 
         fileTitle = videoInfo.title;
         formats = videoInfo.formats;
+
+        /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
+        tumbnail = videoInfo.thumbnail_url;
         // const isFull = videoInfo.full;
         lengthInSeconds = videoInfo.length_seconds;
         // const tumbnail = videoInfo.thumbnail_url;
@@ -50,8 +60,8 @@ app.post('/songs', async (req, res) => {
         chosenFormat = ytdl.chooseFormat(formats, {});
     }
     videoLenghtObject = utils.getHoursFromSeconds(lengthInSeconds);
-
     videoYoutubePath = `output/${fileTitle || 'album'}.avi`;
+    console.log('tumbnails', tumbnail);
     ytdl(url, {
         format: chosenFormat || 'avi',
     })
@@ -64,6 +74,7 @@ app.post('/songs', async (req, res) => {
 
             storeFile(playlistArr[0].songBegin, duration, playlistArr[0].songName)
         });
+
     let counter = 1;
     function storeFile(seekTime, duration, outputFileName) {
         const outPutDir = `output/${fileTitle || 'album'}`;
@@ -74,10 +85,7 @@ app.post('/songs', async (req, res) => {
         let audioFileName = `${outPutDir}/${outputFileName}.mp3`;
         let stream = fs.createWriteStream(audioFileName);
         let start = Date.now();
-        /** downloading the album every time? */
-        // ytdl(url, {
-        //     format: chosenFormat || 'avi',
-        // })
+
         ffmpeg(fs.createReadStream(videoYoutubePath))
             /** currentSeekTime */
             .seekInput(seekTime)
@@ -117,30 +125,13 @@ app.post('/songs', async (req, res) => {
             })
             .writeToStream(stream, { end: true })
     }
-
-    // videoLenghtObject = utils.getHoursFromSeconds(lengthInSeconds);
-
-    // videoYoutubePath = `output/${fileTitle || 'album'}.avi`;
-    // ytdl(url, {
-    //     format: chosenFormat || 'avi',
-    // })
-    //     .pipe(fs.createWriteStream(videoYoutubePath))
-    //     .on('finish', () => {
-    //         console.log('download completed!', 'color: red;');
-    //         res.header('Content-Disposition', `attachment; filename="${fileTitle || 'song'}.mp3"`);
-
-    //         duration = utils.getSecondsFromTimeString(lengthInSeconds, playlistArr[0].songBegin, playlistArr[1].songBegin);
-
-    //         storeFile(playlistArr[0].songBegin, duration, playlistArr[0].songName)
-    //     });
-
     // res.status(200).send('OK');
 });
 
 app.get('/playlist', (req, res) => {
-    const playlist = {
-        playlistArr: playlistArr.slice()
+    for(let track of playlistArr){
+        track.tumbnail = tumbnail;
     }
-
-    res.status(200).json(playlist);
+    console.log(playlistArr);
+    res.status(200).json({playlist: playlistArr.slice()});
 })
