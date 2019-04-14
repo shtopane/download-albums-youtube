@@ -72,7 +72,7 @@ convertBtn.addEventListener('click', () => {
     const url = inputEl.value;
     const body = JSON.stringify({ playlist: textareaEl.value, url: url });
 
-    toggleLoader(true);
+    showLoader(true);
 
     fetch(`${serverUrl}/songs`, {
         method: 'POST',
@@ -80,8 +80,8 @@ convertBtn.addEventListener('click', () => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(json => {
-        toggleLoader(false);
+    }).then(() => {
+        showLoader(false);
         console.log(`done in - ${(Date.now() - start) / 1000}s`);
 
         fetch(`${serverUrl}/playlist`).then(res => res.json()).then((albumInfo: TracklistInfo) => {
@@ -92,8 +92,8 @@ convertBtn.addEventListener('click', () => {
     });
 });
 
-function toggleLoader(startLoader: boolean): void {
-    if (startLoader) {
+const showLoader = (showLoader: boolean): void => {
+    if (showLoader) {
         loader.classList.remove('hidden');
         container.classList.add('blur');
     } else {
@@ -102,7 +102,7 @@ function toggleLoader(startLoader: boolean): void {
     }
 }
 
-function addDownloadLinks(albumName: string): void {
+const addDownloadLinks = (albumName: string): void => {
     const downloadBtnCollection = document.querySelectorAll('.download-btn');
 
     for (let downloadBtn of downloadBtnCollection) {
@@ -113,7 +113,7 @@ function addDownloadLinks(albumName: string): void {
     }
 }
 
-function generatePlaylist(playlistArr: Playlist[], albumName: string): void {
+const generatePlaylist = (playlistArr: Playlist[], albumName: string): void => {
     const tracklistEl = document.querySelector('.tracklist');
     let albumTitle = <Element>playlistEl.querySelector('h2').cloneNode();
     albumTitle.textContent = albumName;
