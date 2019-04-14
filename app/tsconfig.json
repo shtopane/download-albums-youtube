@@ -1,7 +1,11 @@
 {
     "compilerOptions": {
+        "moduleResolution": "node",
+        "strictPropertyInitialization": false,
+        "sourceMap": true,
         "target": "es6",
-        "outFile": "build/app.js"
+        "module": "es2015",
+        "outDir": "./build",
     },
     "include": [
         "./**/*"
