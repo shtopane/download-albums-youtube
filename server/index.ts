@@ -21,15 +21,15 @@ app.listen(port, () => {
     console.log('Server on port: ' + port);
 });
 
-/** Object with string - playlist: string */
-let playlist: { playlist: string; };
+let playlist: string;
 let url: string;
-let videoLenghtObject: { hours: number; minutes: number; seconds: number; };
 let videoYoutubePath: string;
-let fileTitle = 'album';
-let playlistArr: Playlist[] = [];
 let tumbnailUrl: string;
 let duration: number;
+let videoLenghtObject: { hours: number; minutes: number; seconds: number; };
+
+let fileTitle = 'album';
+let playlistArr: Playlist[] = [];
 
 app.post('/songs', async (req, res) => {
     playlist = req.body.playlist;
@@ -62,9 +62,7 @@ app.post('/songs', async (req, res) => {
         .pipe(fs.createWriteStream(videoYoutubePath))
         .on('finish', () => {
             console.log('download completed!', 'color: red;');
-
             duration = utils.getSecondsFromTimeString(lengthInSeconds, playlistArr[0].songBegin, playlistArr[1].songBegin);
-
             storeFile(playlistArr[0].songBegin, duration, playlistArr[0].songName)
         });
 

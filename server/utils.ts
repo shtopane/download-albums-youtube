@@ -1,25 +1,29 @@
-export const utils = {
-    unknownSongCounter: 0,
-    getSongsObjects: function (playlist) {
+import { Playlist } from "./models/playlist";
+
+class Utils {
+    private unknownSongCounter = 0;
+
+    public getSongsObjects(playlist: string): Playlist[] {
         if (!playlist || playlist === null) {
             throw new Error('No playlist!');
         }
 
         let str = playlist;
-        let songObjects = []
+        let strReplaced: string[];
+        let songObjects: Playlist[] = [];
 
         /** 
          * trim whitespace .replace(/\s/g, "") 
          * trim new lines /(\r\n|\n|\r)/gm
          * */
-        str = str.split(/(\r\n|\n|\r)/gm);
+        strReplaced = str.split(/(\r\n|\n|\r)/gm);
 
-        let songObject = {};
-        let fullSongName = '';
+        let songObject: Playlist;
+        let fullSongName: string;
 
-        for (let i = 0; i < str.length; i++) {
-            if (str[i].trim()) {
-                fullSongName = str[i].trim();
+        for (let replacedString of strReplaced) {
+            if (replacedString.trim()) {
+                fullSongName = replacedString.trim();
 
                 songObject = this.cutStringToTimeOnly(fullSongName);
                 songObjects.push(songObject)
@@ -27,54 +31,61 @@ export const utils = {
         }
 
         return songObjects.slice();
-    },
+    }
+
     /** Get seconds from tracklist item time - the format is Min:Sec -> so 01:16 */
-    getSecondsFromTimeString: function (videoTotalSeconds, timeFirstSong, timeSecondSong) {
-        videoTotalSeconds = videoTotalSeconds || 0;
-        let totalVideoLength = utils.getHoursFromSeconds(videoTotalSeconds);
+    public getSecondsFromTimeString(videoTotalSeconds: string, timeFirstSong: string, timeSecondSong: string): number {
+        videoTotalSeconds = videoTotalSeconds || '0';
+        let totalVideoLength = this.getHoursFromSeconds(videoTotalSeconds);
         let hours = totalVideoLength.hours;
+
         let firstSongTimesArr = timeFirstSong.split(':');
         let secondSongTimesArr = timeSecondSong.split(':');
+
         let firstSongDate = new Date();
         let secondSongDate = new Date();
 
         if (hours === 0) {
-            firstSongDate.setMinutes(firstSongTimesArr[0], firstSongTimesArr[1])
-            secondSongDate.setMinutes(secondSongTimesArr[0], secondSongTimesArr[1])
+            firstSongDate.setMinutes(+firstSongTimesArr[0], +firstSongTimesArr[1])
+            secondSongDate.setMinutes(+secondSongTimesArr[0], +secondSongTimesArr[1])
         } else if (hours > 0) {
-            firstSongDate.setHours(firstSongTimesArr[0]);
-            secondSongDate.setHours(secondSongTimesArr[0]);
-            firstSongDate.setMinutes(firstSongTimesArr[1], firstSongTimesArr[2])
-            secondSongDate.setMinutes(secondSongTimesArr[1], secondSongTimesArr[2])
+            firstSongDate.setHours(+firstSongTimesArr[0]);
+            secondSongDate.setHours(+secondSongTimesArr[0]);
+            firstSongDate.setMinutes(+firstSongTimesArr[1], +firstSongTimesArr[2])
+            secondSongDate.setMinutes(+secondSongTimesArr[1], +secondSongTimesArr[2])
         }
 
         let diff = secondSongDate.getTime() - firstSongDate.getTime();
-        let seconds = Math.floor((diff / 1000))
+        let seconds = Math.floor((diff / 1000));
 
         return seconds;
-    },
-    getHoursFromSeconds: function (lenghtS) {
-        const d = Number(lenghtS);
-        const h = Math.floor(d / 3600);
-        const m = Math.floor(d % 3600 / 60);
-        const s = Math.floor(d % 3600 % 60);
+    }
 
-        console.log(`Hours: ${h}, minutes: ${m}, seconds: ${s}`);
+    public getHoursFromSeconds(lengthInSeconds: string): { hours: number; minutes: number; seconds: number } {
+        const duration = Number(lengthInSeconds);
+        const hours = Math.floor(duration / 3600);
+        const minutes = Math.floor(duration % 3600 / 60);
+        const seconds = Math.floor(duration % 3600 % 60);
+
+        console.log(`Hours: ${hours}, minutes: ${minutes}, seconds: ${seconds}`);
 
         return {
-            hours: h,
-            minutes: m,
-            seconds: s
+            hours: hours,
+            minutes: minutes,
+            seconds: seconds
         };
-    },
-    cutStringToTimeOnly: function (str) {
+    }
+
+    public cutStringToTimeOnly(str: string): Playlist {
         if (!str || str === null) {
             throw new Error('No input string provided!');
         }
-        let result = {
+
+        let result: Playlist = {
             songBegin: '',
             songName: ''
         };
+
         /** 
          * Regular expression for digits and :(2 : and 3 couple of digits) -  \d*[:]*\d*[:]\d*
          * Used to extract playable times from tracklist item - so for example if the tracklist item is
@@ -89,6 +100,7 @@ export const utils = {
         } else {
             result.songBegin = matchedTime[0];
         }
+
         /** New Regex -  [a-zA-Z]+\D+[a-zA-Z]  OLD REGEX - \s(\w+(?:$|\s+))+ */
         let matchedSongName = str.match(/[a-zA-Z]+\D+[a-zA-Z]/);
 
@@ -104,4 +116,7 @@ export const utils = {
 
         return result;
     }
-};
+}
+
+
+export const utils = new Utils();
