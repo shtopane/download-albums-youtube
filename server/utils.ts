@@ -1,4 +1,4 @@
-const utils = {
+export const utils = {
     unknownSongCounter: 0,
     getSongsObjects: function (playlist) {
         if (!playlist || playlist === null) {
@@ -105,5 +105,3 @@ const utils = {
         return result;
     }
 };
-
-module.exports = utils;

@@ -1,10 +1,10 @@
-const express = require('express');
-const cors = require('cors');
-const ytdl = require('ytdl-core');
-const fs = require('fs');
-const ffmpeg = require('fluent-ffmpeg');
-const bodyParser = require('body-parser');
-const utils = require('./utils');
+import * as express from 'express';
+import * as cors from 'cors';
+import * as ytdl from 'ytdl-core';
+import * as fs from 'fs';
+import * as ffmpeg from 'fluent-ffmpeg';
+import * as bodyParser from 'body-parser';
+import { utils } from './utils';
 
 const app = express();
 const port = 4000;
@@ -23,11 +23,12 @@ app.listen(port, () => {
 /** Object with string - playlist: string */
 let playlist = {};
 let url = '';
-let videoLenghtObject = {};
+let videoLenghtObject: { hours: number; minutes: number; seconds: number; };
 let videoYoutubePath;
 let fileTitle = 'album';
 let playlistArr = [];
 let tumbnail;
+let duration: number;
 
 app.post('/songs', async (req, res) => {
     playlist = req.body.playlist;
@@ -77,7 +78,7 @@ app.post('/songs', async (req, res) => {
     let counter = 1;
     function storeFile(seekTime, duration, outputFileName) {
         const outPutDir = `output/${fileTitle}`;
-        if (!fs.existsSync(outPutDir)){
+        if (!fs.existsSync(outPutDir)) {
             fs.mkdirSync(outPutDir);
         }
         console.log(`Seektime : ${seekTime}, Duration: ${duration}, File: ${outputFileName}`);
@@ -100,7 +101,7 @@ app.post('/songs', async (req, res) => {
                     res.sendStatus(200);
                 } else {
                     /** Put the end song endTime to be end of the file */
-                    const endSongTimeStr = `${videoLenghtObject.hours > 0 ? videoLenghtObject.hours + ':': ''}${videoLenghtObject.minutes}:${videoLenghtObject.seconds}`;
+                    const endSongTimeStr = `${videoLenghtObject.hours > 0 ? videoLenghtObject.hours + ':' : ''}${videoLenghtObject.minutes}:${videoLenghtObject.seconds}`;
                     let songBegin = playlistArr[counter].songBegin;
                     let songEnd = playlistArr[counter + 1]
                         ? playlistArr[counter + 1].songBegin
@@ -128,15 +129,15 @@ app.post('/songs', async (req, res) => {
 });
 
 app.get('/playlist', (req, res) => {
-    for(let track of playlistArr){
+    for (let track of playlistArr) {
         track.tumbnail = tumbnail;
     }
     console.log(playlistArr);
     console.log(fileTitle);
-    res.status(200).json({playlist: playlistArr.slice(), albumName: fileTitle});
+    res.status(200).json({ playlist: playlistArr.slice(), albumName: fileTitle });
 })
 
-app.get('/download', (req, res)=>{
+app.get('/download', (req, res) => {
     const albumName = req.query.albumName;
     const songName = req.query.songName;
     console.log(albumName);
@@ -147,10 +148,10 @@ app.get('/download', (req, res)=>{
     // res.attachment(`output/${albumName}/${songName}.mp3`);
     // res.header(`Content-Disposition', 'attachment; filename=output/${albumName}/${songName}.mp3`);
     res.download(folder, file, (err) => {
-       if(!err) {
-           console.log('competed!');
-       } else{
-           console.log('error happened: ', err);
-       }
+        if (!err) {
+            console.log('competed!');
+        } else {
+            console.log('error happened: ', err);
+        }
     });
 })
