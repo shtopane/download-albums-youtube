@@ -5,6 +5,15 @@ body {
     margin: 0;
 }
 
+/* UI Kit overrides */
+.uk-button-danger {
+    background-color: #e50000;
+}
+
+.uk-button-danger:hover{
+    background-color: #e50000;
+}
+
 .blur{
     -webkit-filter: blur(5px);
   -moz-filter: blur(5px);
@@ -77,11 +86,6 @@ button:hover {
     background-color: #e50000;
     color: #fff;
 } */
-
-#description-wrap {
-    padding: 1rem 0;
-}
-
 
 textarea {
     width: 98%;

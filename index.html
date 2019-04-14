@@ -23,34 +23,49 @@
     <div id="container">
         <h1 class="heading">Hello world</h1>
         <div id="input-wrap">
-            <input class="URL-input" placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
-            <button class="convert-button uk-button uk-button-secondary">Send</button>
+            <input class="URL-input uk-input" placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
+            <button class="convert-button uk-button uk-button-danger">Send</button>
         </div>
         <div id="description-wrap">
-            <label for="description">
-                Paste a tracklist of the album.
-                The <strong>required information is track name and track time.</strong>
-                Exampe: Track1: 02:25
-                <strong>Look up in the description or the comment section of the video. Usually the tracklist is
-                    there.</strong>
-                    <strong>IMPORTANT!</strong>
-                    <h3>For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss so 0:03:25 or 00:03:25</h3>
-            </label>
-            <textarea name="description" id="description" rows="18"></textarea>
+                <div class="uk-section uk-section-secondary">
+                        <div class="uk-container">
+                            <h3>About</h3>
+                            <div class="uk-flex">
+                                <div>
+                                    <p>Paste a tracklist of the album.</p>
+                                </div>
+                                <div>
+                                    <p>
+                                        The <strong>required information is track name when the track starts.</strong>
+                                        <strong>Look up in the description or the comment section of the video. 
+                                            Usually the tracklist is
+                                            there.</strong>
+                                    </p>
+                                </div>
+                                <div>
+                                    <p>For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss so 0:03:25 or 00:03:25</p>
+                                </div>
+                            </div>
+                    
+                        </div>
+                    </div>
+            <textarea class="uk-textarea" name="description" id="description" rows="15" placeholder="Paste the tracklist of the album. Format is hh:mm:ss"></textarea>
         </div>
 
         <!-- Playlist  -->
         <section id="playlist">
-            <h2>Weird Owl - Nuclear Psychology (2007) (Full Album)</h2>
+            <h2 class="hidden">Weird Owl - Nuclear Psychology (2007) (Full Album)</h2>
             <div 
             class="
+            uk-box-shadow-hover-large
             uk-flex 
             uk-box-shadow-medium 
             uk-padding-small 
             uk-margin 
             uk-flex-between 
-            tracklist 
-            hidden">
+            tracklist
+            hidden 
+           ">
                 <img src="https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg" width="150" alt="">
                 <div class="uk-padding">
                     <span class="song-info">Second song - 00:30</span>

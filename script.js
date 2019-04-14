@@ -11,46 +11,45 @@
         let start = Date.now();
         const url = inputEl.value;
         const body = JSON.stringify({ playlist: textareaEl.value, url: url });
-        loader.classList.remove('hidden');
-        container.classList.add('blur');
-        fetch(`http://localhost:4000/songs`, {
+       
+        toggleLoader(true);
+
+        fetch('http://localhost:4000/songs', {
             method: 'POST',
             body: body,
             headers: {
                 'Content-Type': 'application/json'
             }
         }).then(json => {
-            loader.classList.add('hidden');
-            container.classList.remove('blur');
+            toggleLoader(false);
             console.log(`done in - ${(Date.now() - start) / 1000}s`);
 
-            console.log('response from server', json);
             fetch('http://localhost:4000/playlist').then(res => res.json()).then(albumInfo => {
                 console.log('playlist from server');
                 generatePlaylist(albumInfo.playlist, albumInfo.albumName);
-
-                const downloadBtnCollection = document.querySelectorAll('.download-btn');
-                for(let downloadBtn of downloadBtnCollection){
-                    downloadBtn.addEventListener('click', function(event){
-                        window.location.href = `http://localhost:4000/download?albumName=${playlist.albumName}&songName=${event.target.id}`;
-                    });
-                }
+                addDownloadLinks(albumInfo.albumName);
             });
-            // window.location.href = `http://localhost:4000/download?URL=${url}`;
-
-        })
-        // sendUrl(url);
+        });
     });
 
-    function sendUrl(url) {
-        if (url !== '' && url !== null) {
-            // fetch(`http://localhost:4000/download?URL=${url}`, {
-            //     method: 'GET'
-            // }).then(res => res.json()
-            //     .then(json => console.log('response from server', json)))
-            window.location.href = `http://localhost:4000/download?URL=${url}`;
+    function toggleLoader(startLoader){
+        if(startLoader){
+            loader.classList.remove('hidden');
+            container.classList.add('blur');
+        }else{
+            loader.classList.add('hidden');
+            container.classList.remove('blur');
         }
     }
+
+   function addDownloadLinks(albumName){
+        const downloadBtnCollection = document.querySelectorAll('.download-btn');
+        for(let downloadBtn of downloadBtnCollection) {
+            downloadBtn.addEventListener('click', function(event){
+                window.location.href = `http://localhost:4000/download?albumName=${albumName}&songName=${event.target.id}`;
+            });
+        }
+   }
 
     const playlist = {
         "playlist": [
@@ -110,9 +109,9 @@
 
       function generatePlaylist(playlistArr, albumName){
           const tracklistEl = document.querySelector('.tracklist');
-          let albumTitle = playlistEl.querySelector('h2');
+          let albumTitle = playlistEl.querySelector('h2').cloneNode();
           albumTitle.textContent = albumName;
-
+          albumTitle.classList.remove('hidden');
           let tracklistCopy;
           let currentTrack;
           let downloadBtn;
@@ -131,6 +130,7 @@
               tumbnailEl.src = currentTrack.tumbnail;
               
               console.log(tracklistCopy);
+              playlistEl.classList.remove('hidden');
               playlistEl.appendChild(tracklistCopy);
           }
       }
