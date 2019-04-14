@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "outFile": "build/app.js"
+    },
+    "include": [
+        "./**/*"
+    ],
+    "exclude": [
+        "node_modules",
+    ]
+}

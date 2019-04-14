@@ -1,8 +1,7 @@
-(function () {
     const convertBtn = document.querySelector('.convert-button');
-    const inputEl = document.querySelector('.URL-input');
+    const inputEl: HTMLInputElement = document.querySelector('.URL-input');
     
-    const textareaEl = document.querySelector('#description');
+    const textareaEl: HTMLTextAreaElement = document.querySelector('#description');
     const loader = document.getElementById('loader');
     const container = document.getElementById('container');
     const playlistEl = document.getElementById('playlist');
@@ -46,7 +45,8 @@
         const downloadBtnCollection = document.querySelectorAll('.download-btn');
         for(let downloadBtn of downloadBtnCollection) {
             downloadBtn.addEventListener('click', function(event){
-                window.location.href = `http://localhost:4000/download?albumName=${albumName}&songName=${event.target.id}`;
+                const target: HTMLButtonElement = <HTMLButtonElement> event.target;
+                window.location.href = `http://localhost:4000/download?albumName=${albumName}&songName=${target.id}`;
             });
         }
    }
@@ -109,7 +109,7 @@
 
       function generatePlaylist(playlistArr, albumName){
           const tracklistEl = document.querySelector('.tracklist');
-          let albumTitle = playlistEl.querySelector('h2').cloneNode();
+          let albumTitle = <Element> playlistEl.querySelector('h2').cloneNode();
           albumTitle.textContent = albumName;
           albumTitle.classList.remove('hidden');
           let tracklistCopy;
@@ -118,7 +118,7 @@
           let tumbnailEl;
           let songEl;
 
-          for(let i =0; i<playlistArr.length; i++){
+          for(let i = 0; i < playlistArr.length; i++){
               currentTrack = playlistArr[i];
               tracklistCopy = tracklistEl.cloneNode(true);
               tracklistCopy.classList.remove('hidden');
@@ -136,5 +136,3 @@
       }
 
     // generatePlaylist(playlist.playlist, playlist.albumName);
-     
-})();
