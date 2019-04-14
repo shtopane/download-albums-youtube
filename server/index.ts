@@ -4,12 +4,13 @@ import * as ytdl from 'ytdl-core';
 import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as bodyParser from 'body-parser';
+
 import { utils } from './utils';
+import { Playlist } from './models/playlist';
+import { PlaylistResponse } from './models/playlist-response';
 
-const app = express();
+const app: express.Application = express();
 const port = 4000;
-
-const albumController = require('./controllers/album.controller');
 
 app.use(express.static(__dirname + '/output'));
 app.use(cors());
@@ -21,13 +22,13 @@ app.listen(port, () => {
 });
 
 /** Object with string - playlist: string */
-let playlist = {};
-let url = '';
+let playlist: { playlist: string; };
+let url: string;
 let videoLenghtObject: { hours: number; minutes: number; seconds: number; };
-let videoYoutubePath;
+let videoYoutubePath: string;
 let fileTitle = 'album';
-let playlistArr = [];
-let tumbnail;
+let playlistArr: Playlist[] = [];
+let tumbnailUrl: string;
 let duration: number;
 
 app.post('/songs', async (req, res) => {
@@ -37,34 +38,26 @@ app.post('/songs', async (req, res) => {
     console.log('playlist', playlist);
     console.log('playlistArr', playlistArr);
 
-    const videoInfo = await ytdl.getInfo(url);
-    let formats;
+    const videoInfo: ytdl.videoInfo = await ytdl.getInfo(url);
+    let formats: ytdl.videoFormat[];
+    let chosenFormat: ytdl.videoFormat | string;
+    let lengthInSeconds: string;
 
-    // const isFull = videoInfo.full;
-    let lengthInSeconds;
-
-
-    let chosenFormat;
-    // const isPrivate = videoInfo.player_response.videoDetails.isPrivate;
     if (videoInfo) {
-
         fileTitle = videoInfo.title;
         formats = videoInfo.formats;
-
         /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
-        tumbnail = videoInfo.thumbnail_url;
-        // const isFull = videoInfo.full;
+        tumbnailUrl = videoInfo.thumbnail_url;
         lengthInSeconds = videoInfo.length_seconds;
-        // const tumbnail = videoInfo.thumbnail_url;
-        // const shortDescription = videoInfo.player_response.videoDetails.shortDescription;
-
-        chosenFormat = ytdl.chooseFormat(formats, {});
+        chosenFormat = <ytdl.videoFormat>ytdl.chooseFormat(formats, {});
     }
+
     videoLenghtObject = utils.getHoursFromSeconds(lengthInSeconds);
     videoYoutubePath = `output/${fileTitle}.avi`;
-    console.log('tumbnails', tumbnail);
+    console.log('tumbnails', tumbnailUrl);
+
     ytdl(url, {
-        format: chosenFormat || 'avi',
+        format: (chosenFormat || 'avi') as ytdl.videoFormat,
     })
         .pipe(fs.createWriteStream(videoYoutubePath))
         .on('finish', () => {
@@ -76,14 +69,17 @@ app.post('/songs', async (req, res) => {
         });
 
     let counter = 1;
-    function storeFile(seekTime, duration, outputFileName) {
+
+    function storeFile(seekTime: string, duration: number, outputFileName: string): void {
         const outPutDir = `output/${fileTitle}`;
+
         if (!fs.existsSync(outPutDir)) {
             fs.mkdirSync(outPutDir);
         }
+
         console.log(`Seektime : ${seekTime}, Duration: ${duration}, File: ${outputFileName}`);
         let audioFileName = `${outPutDir}/${outputFileName}.mp3`;
-        let stream = fs.createWriteStream(audioFileName);
+        let stream: fs.WriteStream = fs.createWriteStream(audioFileName);
         let start = Date.now();
 
         ffmpeg(fs.createReadStream(videoYoutubePath))
@@ -97,11 +93,11 @@ app.post('/songs', async (req, res) => {
                  *  Remove if this is not logical at all.) */
                 if (counter >= playlistArr.length || playlistArr.length <= 2) {
                     console.log('NO MORE SONGS!');
-
                     res.sendStatus(200);
                 } else {
                     /** Put the end song endTime to be end of the file */
-                    const endSongTimeStr = `${videoLenghtObject.hours > 0 ? videoLenghtObject.hours + ':' : ''}${videoLenghtObject.minutes}:${videoLenghtObject.seconds}`;
+                    const hoursString = `${videoLenghtObject.hours > 0 ? videoLenghtObject.hours + ':' : ''}`;
+                    const endSongTimeStr = `${hoursString}${videoLenghtObject.minutes}:${videoLenghtObject.seconds}`;
                     let songBegin = playlistArr[counter].songBegin;
                     let songEnd = playlistArr[counter + 1]
                         ? playlistArr[counter + 1].songBegin
@@ -109,7 +105,6 @@ app.post('/songs', async (req, res) => {
 
                     /** Calculate next song's duration */
                     let nextDuration = utils.getSecondsFromTimeString(lengthInSeconds, songBegin, songEnd);
-                    console.log('in on end: ', songBegin, nextDuration, playlistArr[counter].songName)
                     /** call the function again with the next song data */
                     storeFile(songBegin, nextDuration, playlistArr[counter].songName);
                     counter++;
@@ -125,16 +120,21 @@ app.post('/songs', async (req, res) => {
             })
             .writeToStream(stream, { end: true })
     }
-    // res.status(200).send('OK');
 });
 
 app.get('/playlist', (req, res) => {
     for (let track of playlistArr) {
-        track.tumbnail = tumbnail;
+        track.tumbnail = tumbnailUrl;
     }
+
     console.log(playlistArr);
     console.log(fileTitle);
-    res.status(200).json({ playlist: playlistArr.slice(), albumName: fileTitle });
+    const response: PlaylistResponse = {
+        playlist: playlistArr.slice(),
+        albumName: fileTitle
+    };
+
+    res.status(200).json(response);
 })
 
 app.get('/download', (req, res) => {
@@ -154,4 +154,4 @@ app.get('/download', (req, res) => {
             console.log('error happened: ', err);
         }
     });
-})
+});
