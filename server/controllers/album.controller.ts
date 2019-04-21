@@ -5,12 +5,10 @@ import * as ffmpeg from 'fluent-ffmpeg';
 
 import { utils } from '../utils';
 import { Playlist } from '../models/playlist';
-import { Request, Response } from 'express';
-import { resolve } from 'path';
 import { BaseResponse } from '../models/base-response';
 import { PlaylistResponse } from '../models/playlist-response';
 
-export class SongsController {
+export class AlbumController {
     public req: express.Request;
     public res: express.Response;
 
@@ -27,7 +25,7 @@ export class SongsController {
 
     private counter = 1;
 
-    public async handleDownloadAndSlicing(req: express.Request, res: express.Response) {
+    public async handleAlbumSlicing(req: express.Request, res: express.Response) {
         this.req = req;
         this.res = res;
 
@@ -109,12 +107,12 @@ export class SongsController {
                 console.log('command line: ', line);
             })
             .on('error', (err) => {
-                console.log('error happended: ', err);
+                this.onError(err);
             })
             .writeToStream(stream, { end: true })
     }
 
-    private onError(err: string): void {
+    private onError(err: any): void {
         console.log('error happended: ', err);
         this.res.status(500).json({ errorMessage: err, success: false });
     }

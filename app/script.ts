@@ -88,6 +88,7 @@ convertBtn.addEventListener('click', () => {
             console.log('playlist from server');
             generatePlaylist(albumInfo.playlist, albumInfo.albumName);
             addDownloadLinks(albumInfo.albumName);
+            addListenLinks(albumInfo.albumName);
         });
     });
 });
@@ -113,6 +114,18 @@ const addDownloadLinks = (albumName: string): void => {
     }
 }
 
+const addListenLinks = (albumName: string): void => {
+    const listenBtnCollection = document.querySelectorAll('.listen-btn');
+
+    for (let listenBtn of listenBtnCollection) {
+        listenBtn.addEventListener('click', (event) => {
+            const target: HTMLButtonElement = <HTMLButtonElement>event.target;
+            const dataListen = target.getAttribute('data-listen');
+            window.location.href = `${serverUrl}/listen?albumName=${albumName}&songName=${dataListen}`;
+        });
+    }
+}
+
 const generatePlaylist = (playlistArr: Playlist[], albumName: string): void => {
     const tracklistEl = document.querySelector('.tracklist');
     let albumTitle = <Element>playlistEl.querySelector('h2').cloneNode();
@@ -121,6 +134,7 @@ const generatePlaylist = (playlistArr: Playlist[], albumName: string): void => {
     let tracklistCopy: HTMLDivElement;
     let currentTrack: Playlist;
     let downloadBtn: HTMLButtonElement;
+    let listenBtn: HTMLButtonElement;
     let tumbnailEl: HTMLImageElement;
     let songEl: HTMLSpanElement;
 
@@ -130,9 +144,12 @@ const generatePlaylist = (playlistArr: Playlist[], albumName: string): void => {
         tumbnailEl = tracklistCopy.querySelector('img');
         songEl = tracklistCopy.querySelector('.song-info');
         downloadBtn = tracklistCopy.querySelector('.download-btn');
+        listenBtn = tracklistCopy.querySelector('.listen-btn');
 
         tracklistCopy.classList.remove('hidden');
         downloadBtn.id = currentTrack.songName;
+        listenBtn.setAttribute('data-listen', currentTrack.songName);
+        console.log(listenBtn);
         songEl.textContent = `${currentTrack.songName} - ${currentTrack.songBegin}`;
         tumbnailEl.src = currentTrack.tumbnail;
 

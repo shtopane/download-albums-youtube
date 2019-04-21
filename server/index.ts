@@ -1,15 +1,16 @@
 import { app } from './server';
 
-import { SongsController } from './controllers/songs.controller';
+import { AlbumController } from './controllers/album.controller';
 import { DownloadController } from './controllers/download.controller';
 
 
 /** INIT HERE TO CAPTURE THE RIGHT THIS */
-const songsController = new SongsController();
+const albumController = new AlbumController();
 const downloadController = new DownloadController();
 
 /** Pass the correct this to the contorller */
-app.post('/songs', songsController.handleDownloadAndSlicing.bind(songsController));
-app.get('/playlist', songsController.handlePlaylist.bind(songsController));
+app.post('/songs', albumController.handleAlbumSlicing.bind(albumController));
+app.get('/playlist', albumController.handlePlaylist.bind(albumController));
 
 app.get('/download', downloadController.handleDownload.bind(downloadController));
+app.get('/listen', downloadController.handleListen.bind(downloadController));
