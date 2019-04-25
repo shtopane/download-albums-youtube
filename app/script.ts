@@ -1,5 +1,6 @@
 import { Playlist } from "./models/playlist";
 import { TracklistInfo } from "./models/tracklist-info";
+import { BaseResponse } from "./models/base-response";
 
 const serverUrl = 'http://localhost:4000';
 
@@ -80,18 +81,40 @@ convertBtn.addEventListener('click', () => {
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(() => {
-        showLoader(false);
-        console.log(`done in - ${(Date.now() - start) / 1000}s`);
+    }).then(res => res.json())
+        .then((json: BaseResponse) => {
+            showLoader(false);
+            console.log('response', json);
 
-        fetch(`${serverUrl}/playlist`).then(res => res.json()).then((albumInfo: TracklistInfo) => {
-            console.log('playlist from server');
-            generatePlaylist(albumInfo.playlist, albumInfo.albumName);
-            addDownloadLinks(albumInfo.albumName);
-            addListenLinks(albumInfo.albumName);
+            if (json.success) {
+                console.log(`done in - ${(Date.now() - start) / 1000}s`);
+                fetch(`${serverUrl}/playlist`)
+                    .then(res => res.json())
+                    .then((albumInfo: TracklistInfo) => {
+                        console.log('playlist from server');
+                        generatePlaylist(albumInfo.playlist, albumInfo.albumName);
+                        addDownloadLinks(albumInfo.albumName);
+                        addListenLinks(albumInfo.albumName);
+                    });
+            } else {
+                showError(json.errorMessage);
+            }
         });
-    });
 });
+
+
+const showError = (error: string): void => {
+    const alert = document.querySelector('.alert');
+    const alertText = document.querySelector('.alert-text');
+
+    alert.classList.remove('hidden');
+    alertText.textContent = error;
+
+    setTimeout(() => {
+        alert.classList.add('hidden');
+    }, 5000);
+};
+
 
 const showLoader = (showLoader: boolean): void => {
     if (showLoader) {
@@ -104,7 +127,10 @@ const showLoader = (showLoader: boolean): void => {
 }
 
 const addDownloadLinks = (albumName: string): void => {
-    const downloadBtnCollection = document.querySelectorAll('.download-btn');
+    /** Strange but typescript NodeList<Element> is not iteratable. I am looking into this
+     *  TODO: Check this and fix it.
+     */
+    const downloadBtnCollection = document.querySelectorAll('.download-btn') as unknown as Array<Element>;
 
     for (let downloadBtn of downloadBtnCollection) {
         downloadBtn.addEventListener('click', (event) => {
@@ -115,7 +141,7 @@ const addDownloadLinks = (albumName: string): void => {
 }
 
 const addListenLinks = (albumName: string): void => {
-    const listenBtnCollection = document.querySelectorAll('.listen-btn');
+    const listenBtnCollection = document.querySelectorAll('.listen-btn') as unknown as Array<Element>;
 
     for (let listenBtn of listenBtnCollection) {
         listenBtn.addEventListener('click', (event) => {
