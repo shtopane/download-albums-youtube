@@ -42,6 +42,11 @@ class Utils {
         let firstSongTimesArr = timeFirstSong.split(':');
         let secondSongTimesArr = timeSecondSong.split(':');
 
+        if (hours > 0 && (firstSongTimesArr.length < 3 || secondSongTimesArr.length < 3)) {
+            /** Invalid playlist case */
+            return null;
+        }
+
         let firstSongDate = new Date();
         let secondSongDate = new Date();
 
@@ -57,12 +62,16 @@ class Utils {
 
         let diff = secondSongDate.getTime() - firstSongDate.getTime();
         let seconds = Math.floor((diff / 1000));
-
+        console.log('getSecondsFromTimeString|firstDate', firstSongDate)
+        console.log('getSecondsFromTimeString|secondSongDate', secondSongDate)
+        console.log('getSecondsFromTimeString|diff', diff)
+        console.log('getSecondsFromTimeString|seconds', seconds)
         return seconds;
     }
 
     public getHoursFromSeconds(lengthInSeconds: string): { hours: number; minutes: number; seconds: number } {
         const duration = Number(lengthInSeconds);
+        console.log('getHoursFromSeconds|duration', duration);
         const hours = Math.floor(duration / 3600);
         const minutes = Math.floor(duration % 3600 / 60);
         const seconds = Math.floor(duration % 3600 % 60);

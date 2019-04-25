@@ -7,6 +7,7 @@ import { utils } from '../utils';
 import { Playlist } from '../models/playlist';
 import { BaseResponse } from '../models/base-response';
 import { PlaylistResponse } from '../models/playlist-response';
+import { resolve } from 'path';
 
 export class AlbumController {
     public req: express.Request;
@@ -32,13 +33,10 @@ export class AlbumController {
         this.playlist = this.req.body.playlist;
         this.url = this.req.body.url;
         this.playlistArr = utils.getSongsObjects(this.playlist);
-        console.log('playlist', this.playlist);
-        console.log('playlistArr', this.playlistArr);
-
-        const videoInfo: ytdl.videoInfo = await ytdl.getInfo(this.url);
 
         let formats: ytdl.videoFormat[];
         let chosenFormat: ytdl.videoFormat | string;
+        const videoInfo: ytdl.videoInfo = await ytdl.getInfo(this.url);
 
         if (videoInfo) {
             formats = videoInfo.formats;
@@ -47,26 +45,37 @@ export class AlbumController {
             /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
             this.tumbnailUrl = videoInfo.thumbnail_url;
             this.lengthInSeconds = videoInfo.length_seconds;
+        } else {
+            this.noVideoInfoErrorHandle();
         }
 
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
         this.videoYoutubePath = `output/${this.fileTitle}.avi`;
+
+        /** Calculate duration for the first song. Calculate here so that if the tracklist in invalid
+        *   the user will get to know quickly?
+        */
+        this.duration = utils
+            .getSecondsFromTimeString(
+                this.lengthInSeconds,
+                this.playlistArr[0].songBegin,
+                this.playlistArr[1].songBegin);
+
+        if (this.duration === null) {
+            this.invalidPlaylistErrorHandle();
+        }
 
         ytdl(this.url, {
             format: (chosenFormat || 'avi') as ytdl.videoFormat,
         })
             .pipe(fs.createWriteStream(this.videoYoutubePath))
             .on('finish', () => {
-                console.log('download completed!', 'color: red;');
-                this.duration = utils
-                    .getSecondsFromTimeString(
-                        this.lengthInSeconds,
-                        this.playlistArr[0].songBegin,
-                        this.playlistArr[1].songBegin);
-
+                console.log('download completed!', 'color: red;')
                 this.storeFile(this.playlistArr[0].songBegin, this.duration, this.playlistArr[0].songName);
             });
     }
+
+
 
     public handlePlaylist(req: express.Request, res: express.Response) {
         for (let track of this.playlistArr) {
@@ -104,7 +113,7 @@ export class AlbumController {
                 this.onEnd();
             })
             .on('stderr', (line) => {
-                console.log('command line: ', line);
+                console.log(`command line: ${line}`);
             })
             .on('error', (err) => {
                 this.onError(err);
@@ -119,20 +128,46 @@ export class AlbumController {
 
     private onEnd(): void {
         /** if we reached the end of the tracklist or the tracklist is 2 of length(1 song out of the whole album?
-         *  Remove if this is not logical at all.) */
+         *  Remove if this is not logical at all.) 
+         */
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
             console.log('NO MORE SONGS!');
             this.res.status(200).json({ success: true });
         } else if (this.playlistArr.length === 1) {
-            this.res.status(401).json({ errorMessage: 'You cannot send only 1 track in an album!', success: false } as BaseResponse);
+            this.invalidPlaylistLengthErrorHandle();
         } else {
             let { nextDuration, songBegin } = this.generateNextDuration(this.lengthInSeconds);
+
+            if (nextDuration === null) {
+                this.invalidPlaylistErrorHandle();
+            }
 
             /** call the function again with the next song data */
             this.storeFile(songBegin, nextDuration, this.playlistArr[this.counter].songName);
             this.counter++;
-            // console.log(`\ndone, thanks - ${(Date.now() - start) / 1000}s`);
         }
+    }
+
+    private noVideoInfoErrorHandle(): void {
+        this.res.status(500).json({
+            erroMessage: 'No video info for this file. Please, select another one',
+            success: false
+        } as BaseResponse);
+    }
+
+    private invalidPlaylistLengthErrorHandle(): void {
+        this.res
+            .status(500)
+            .json({ errorMessage: 'You cannot send only 1 track in an album!', success: false } as BaseResponse);
+    }
+
+    private invalidPlaylistErrorHandle() {
+        this.res.status(500).json(
+            {
+                errorMessage: 'Invalid tracklist!',
+                success: false
+            } as BaseResponse);
+        this.res.end();
     }
 
     private generateNextDuration(lengthInSeconds: string): { nextDuration: number; songBegin: string } {
