@@ -21,6 +21,9 @@
         </div>
     </div>
     <div id="container">
+        <div uk-alert class="uk-alert-danger hidden alert">
+            <p class="alert-text">Invalid tracklist!</p>
+        </div>
         <h1 class="heading">Hello world</h1>
         <div id="input-wrap">
             <input class="URL-input uk-input" placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
@@ -30,7 +33,7 @@
             <div class="uk-section uk-section-secondary">
                 <div class="uk-container">
                     <h3>About</h3>
-                    <div class="uk-flex">
+                    <div class="uk-flex uk-flex-column">
                         <div>
                             <p>Paste a tracklist of the album.</p>
                         </div>
@@ -80,7 +83,7 @@
         </section>
 
 
-        <script type="text/javascript" src="./build/script.js"></script>
+        <script type="text/javascript" src="./dist/bundle.js"></script>
 </body>
 
 </html>

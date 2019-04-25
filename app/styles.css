@@ -5,35 +5,49 @@ body {
     margin: 0;
 }
 
+p,
+ul {
+    margin: 0;
+}
+
 /* UI Kit overrides */
-.uk-button-danger {
+.uk-button-danger,
+.uk-alert-danger {
     background-color: #e50000;
 }
 
-.uk-button-danger:hover{
+.uk-button-danger:hover {
     background-color: #e50000;
 }
 
-.blur{
+.uk-alert-danger {
+    margin-top: 2rem;
+    text-align: left;
+    padding: 1rem;
+    color: #fff;
+}
+
+.blur {
     -webkit-filter: blur(5px);
-  -moz-filter: blur(5px);
-  -o-filter: blur(5px);
-  -ms-filter: blur(5px);
-  filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
 }
+
 .hidden {
     display: none;
 }
 
-#loader{
+#loader {
     z-index: 5;
     width: 100%;
     height: 100%;
     position: absolute;
-    background-color: rgba(0,0,0,.7);
+    background-color: rgba(0, 0, 0, .7);
 }
 
-#loader > div{
+#loader>div {
     z-index: 5;
     left: 48%;
     top: 50%;
@@ -97,50 +111,57 @@ textarea {
     position: relative;
     width: 64px;
     height: 64px;
-  }
-  .lds-facebook div {
+}
+
+.lds-facebook div {
     display: inline-block;
     position: absolute;
     left: 6px;
     width: 13px;
     background: #e50000;
     animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
-  }
-  .lds-facebook div:nth-child(1) {
+}
+
+.lds-facebook div:nth-child(1) {
     left: 6px;
     animation-delay: -0.24s;
-  }
-  .lds-facebook div:nth-child(2) {
+}
+
+.lds-facebook div:nth-child(2) {
     left: 26px;
     animation-delay: -0.12s;
-  }
-  .lds-facebook div:nth-child(3) {
+}
+
+.lds-facebook div:nth-child(3) {
     left: 45px;
     animation-delay: 0;
-  }
-  @keyframes lds-facebook {
-    0% {
-      top: 6px;
-      height: 51px;
-    }
-    50%, 100% {
-      top: 19px;
-      height: 26px;
-    }
-  }
+}
 
-  .media{
+@keyframes lds-facebook {
+    0% {
+        top: 6px;
+        height: 51px;
+    }
+
+    50%,
+    100% {
+        top: 19px;
+        height: 26px;
+    }
+}
+
+.media {
     overflow: hidden;
     position: relative;
     width: 50%;
     height: 100px;
-  }
+}
 
-  .media > img{
+.media>img {
     max-width: none;
     position: absolute;
     left: 50%;
     vertical-align: middle;
     top: 50%;
-    transform: translate(-50%,-50%);
-  }
+    transform: translate(-50%, -50%);
+}
