@@ -3,9 +3,14 @@
         "moduleResolution": "node",
         "strictPropertyInitialization": false,
         "sourceMap": true,
-        "target": "es6",
-        "module": "es2015",
+        "module": "es6",
+        "target": "es5",
         "outDir": "./build",
+        "lib": [
+            "es2016",
+            "dom",
+            "es5"
+        ]
     },
     "include": [
         "./**/*"
