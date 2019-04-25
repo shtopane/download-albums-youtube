@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Converter</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <!-- UIkit CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/css/uikit.min.css" />
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
+</head>
+
+<body>
+    <div id="loader" class="hidden">
+        <div class="lds-facebook">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+    <div id="container">
+        <div uk-alert class="uk-alert-danger hidden alert">
+            <p class="alert-text">Invalid tracklist!</p>
+        </div>
+        <h1 class="heading">Hello world</h1>
+        <div id="input-wrap">
+            <input class="URL-input uk-input" placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
+            <button class="convert-button uk-button uk-button-danger">Send</button>
+        </div>
+        <div id="description-wrap">
+            <div class="uk-section uk-section-secondary">
+                <div class="uk-container">
+                    <h3>About</h3>
+                    <div class="uk-flex uk-flex-column">
+                        <div>
+                            <p>Paste a tracklist of the album.</p>
+                        </div>
+                        <div>
+                            <p>
+                                The <strong>required information is track name when the track starts.</strong>
+                                <strong>Look up in the description or the comment section of the video.
+                                    Usually the tracklist is
+                                    there.</strong>
+                            </p>
+                        </div>
+                        <div>
+                            <p>For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss so 0:03:25
+                                or 00:03:25</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <textarea class="uk-textarea" name="description" id="description" rows="15"
+                placeholder="Paste the tracklist of the album. Format is hh:mm:ss"></textarea>
+        </div>
+
+        <!-- Playlist  -->
+        <section id="playlist">
+            <h2 class="hidden">Weird Owl - Nuclear Psychology (2007) (Full Album)</h2>
+            <div class="
+            uk-box-shadow-hover-large
+            uk-flex 
+            uk-box-shadow-medium 
+            uk-padding-small 
+            uk-margin 
+            uk-flex-between 
+            tracklist
+            hidden 
+           ">
+                <img src="https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg" width="150" alt="">
+                <div class="uk-padding">
+                    <span class="song-info">Second song - 00:30</span>
+                </div>
+                <div class="uk-margin-auto-top">
+                    <button
+                        class="uk-button uk-button-secondary uk-width-1-1 uk-margin-small-bottom download-btn">Download</button>
+                    <button class="uk-button uk-button-primary uk-width-1-1 listen-btn">Listen</button>
+                </div>
+            </div>
+        </section>
+
+
+        <script type="text/javascript" src="./dist/bundle.js"></script>
+</body>
+
+</html>

@@ -1,2 +1,5 @@
+app/node_modules
+app/build/**
+app/dist/**
 server/node_modules
 server/output
