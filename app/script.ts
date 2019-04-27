@@ -12,6 +12,8 @@ const loader = document.getElementById('loader');
 const container = document.getElementById('container');
 const playlistEl = document.getElementById('playlist');
 
+
+let unknownSongCounter = 0;
 /** TEST DATA */
 const playlist: TracklistInfo = {
     "playlist": [
@@ -83,10 +85,10 @@ convertBtn.addEventListener('click', () => {
     }
 
     const body = JSON.stringify({ playlist: tracklistInfo, url: url });
-    const playlist = getSongsObjects(tracklistInfo);
-    console.log('playlistArr', playlist);
+    // const playlist = getSongsObjects(tracklistInfo);
+    // console.log('playlistArr', playlist);
 
-    return;
+    // return;
     showLoader(true);
 
     fetch(`${serverUrl}/songs`, {
@@ -121,38 +123,38 @@ const getSongsObjects = (playlist: string): Playlist[] => {
         throw new Error('No playlist!');
     }
     console.log('playlist str', playlist);
+    const minimumAcceptedSongsComputed = 2;
+    let numberOfSongsInPlaylist = getLengthOfTracklist(playlist);
+    console.log('number of songs', numberOfSongsInPlaylist);
     let str = playlist;
-    let strReplaced: string[];
+    let computedPlaylist: string[];
     let songObjects: Playlist[] = [];
 
-    /** 
-     * trim whitespace .replace(/\s/g, "") 
-     * trim new lines /(\r\n|\n|\r)/gm
-     * regex to split by whitespace between 2 digits(end of the first song, begin of another) (?<=\d) (?=\d)
-     * */
-    // const bracketRegExp = /[)]/gm;
-    // const newLinesRegExp = /(\r\n|\n|\r)/gm;
-    // const whiteSpaceBetweenTwoDigitsRegExp = /(?<=\d) (?=\d)/gm;
-
     /** replace closing bracket with empty string(if any) */
-    str = str.replace(regexConstants.bracketRegExp, '');
-    strReplaced = str.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+    playlist = playlist.replace(regexConstants.bracketRegExp, '');
+    computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
 
-    if (strReplaced.length < 2) {
-        strReplaced = str.split(regexConstants.newLinesRegExp);
+    if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
+        computedPlaylist = playlist.split(regexConstants.newLinesRegExp);
+
+        if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
+            computedPlaylist = playlist.split(regexConstants.whiteSpaceBeforeDigitRegExp);
+        }
     }
 
-    console.log('replaced string', strReplaced);
+    console.log('replaced string', computedPlaylist);
 
     let songObject: Playlist;
     let fullSongName: string;
 
-    for (let replacedString of strReplaced) {
+    for (let replacedString of computedPlaylist) {
         if (replacedString.trim()) {
             fullSongName = replacedString.trim();
 
             songObject = cutStringToTimeOnly(fullSongName);
-            songObjects.push(songObject)
+            if (songObject && Object.keys(songObject).length > 0) {
+                songObjects.push(songObject)
+            }
         }
     }
 
@@ -165,37 +167,43 @@ const cutStringToTimeOnly = (str: string): Playlist => {
     }
 
     let result: Playlist = {
-        songBegin: '',
-        songName: ''
+        songBegin: undefined,
+        songName: undefined
     };
 
-    /** 
-     * Regular expression for digits and :(2 : and 3 couple of digits) -  \d*[:]*\d*[:]\d*
-     * Used to extract playable times from tracklist item - so for example if the tracklist item is
-     * Hope & Pray - 00:00
-     * We want the time that this song is played in the playlist (00:00)
-     * */
-    let matchedTime = str.match(/\d*[:]*\d+[:]\d+/);
+    let matchedTime = str.match(regexConstants.trackTimeRegExp);
 
     if (matchedTime === null) {
-        result.songBegin = '0:00'
-        return result;
+        return;
     } else {
         result.songBegin = matchedTime[0];
     }
 
-    /** New Regex -  [a-zA-Z]+\D+[a-zA-Z]  OLD REGEX - \s(\w+(?:$|\s+))+ */
-    let matchedSongName = str.match(/[a-zA-Z]+\D+[a-zA-Z]/);
+    let matchedSongName = str.match(regexConstants.trackNameRegExp);
 
     if (matchedSongName === null) {
-        result.songName = `UnknownSong${++this.unknownSongCounter}`;
+        result.songName = `UnknownSong${++unknownSongCounter}`;
         return result;
     } else {
-
-        /** REG FOR WORDS \s(\w+(?:$|\s+))+ */
         result.songName = matchedSongName[0];
         result.songName = result.songName.trim();
     }
+
+    return result;
+}
+
+const getLengthOfTracklist = (playlistStr: string): number => {
+    let result: number;
+    let songNumbers = playlistStr.match(regexConstants.numberFollowedByDotRegExp);
+
+    if (songNumbers === null) {
+        return result;
+    }
+
+    let lastSongNumber = songNumbers[songNumbers.length - 1]
+
+    lastSongNumber = lastSongNumber.replace(/\D/, '')
+    result = !isNaN(+lastSongNumber) ? +lastSongNumber : undefined;
 
     return result;
 }

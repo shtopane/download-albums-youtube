@@ -3,7 +3,7 @@ import * as ytdl from 'ytdl-core';
 import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
 
-import { utils } from '../utils';
+import { utils } from '../utils/utils';
 import { Playlist } from '../models/playlist';
 import { BaseResponse } from '../models/base-response';
 import { PlaylistResponse } from '../models/playlist-response';
