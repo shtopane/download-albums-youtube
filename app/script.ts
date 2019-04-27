@@ -1,6 +1,7 @@
 import { Playlist } from "./models/playlist";
 import { TracklistInfo } from "./models/tracklist-info";
 import { BaseResponse } from "./models/base-response";
+import * as regexConstants from './constants/regex.constants';
 
 const serverUrl = 'http://localhost:4000';
 
@@ -71,8 +72,21 @@ const playlist: TracklistInfo = {
 convertBtn.addEventListener('click', () => {
     let start = Date.now();
     const url = inputEl.value;
-    const body = JSON.stringify({ playlist: textareaEl.value, url: url });
+    const tracklistInfo = textareaEl.value;
 
+    if (!url) {
+        showError('You should place an url!');
+        return;
+    } else if (!tracklistInfo) {
+        showError('You should provide a tracklist!');
+        return;
+    }
+
+    const body = JSON.stringify({ playlist: tracklistInfo, url: url });
+    const playlist = getSongsObjects(tracklistInfo);
+    console.log('playlistArr', playlist);
+
+    return;
     showLoader(true);
 
     fetch(`${serverUrl}/songs`, {
@@ -102,6 +116,89 @@ convertBtn.addEventListener('click', () => {
         });
 });
 
+const getSongsObjects = (playlist: string): Playlist[] => {
+    if (!playlist || playlist === null) {
+        throw new Error('No playlist!');
+    }
+    console.log('playlist str', playlist);
+    let str = playlist;
+    let strReplaced: string[];
+    let songObjects: Playlist[] = [];
+
+    /** 
+     * trim whitespace .replace(/\s/g, "") 
+     * trim new lines /(\r\n|\n|\r)/gm
+     * regex to split by whitespace between 2 digits(end of the first song, begin of another) (?<=\d) (?=\d)
+     * */
+    // const bracketRegExp = /[)]/gm;
+    // const newLinesRegExp = /(\r\n|\n|\r)/gm;
+    // const whiteSpaceBetweenTwoDigitsRegExp = /(?<=\d) (?=\d)/gm;
+
+    /** replace closing bracket with empty string(if any) */
+    str = str.replace(regexConstants.bracketRegExp, '');
+    strReplaced = str.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+
+    if (strReplaced.length < 2) {
+        strReplaced = str.split(regexConstants.newLinesRegExp);
+    }
+
+    console.log('replaced string', strReplaced);
+
+    let songObject: Playlist;
+    let fullSongName: string;
+
+    for (let replacedString of strReplaced) {
+        if (replacedString.trim()) {
+            fullSongName = replacedString.trim();
+
+            songObject = cutStringToTimeOnly(fullSongName);
+            songObjects.push(songObject)
+        }
+    }
+
+    return songObjects.slice();
+}
+
+const cutStringToTimeOnly = (str: string): Playlist => {
+    if (!str || str === null) {
+        throw new Error('No input string provided!');
+    }
+
+    let result: Playlist = {
+        songBegin: '',
+        songName: ''
+    };
+
+    /** 
+     * Regular expression for digits and :(2 : and 3 couple of digits) -  \d*[:]*\d*[:]\d*
+     * Used to extract playable times from tracklist item - so for example if the tracklist item is
+     * Hope & Pray - 00:00
+     * We want the time that this song is played in the playlist (00:00)
+     * */
+    let matchedTime = str.match(/\d*[:]*\d+[:]\d+/);
+
+    if (matchedTime === null) {
+        result.songBegin = '0:00'
+        return result;
+    } else {
+        result.songBegin = matchedTime[0];
+    }
+
+    /** New Regex -  [a-zA-Z]+\D+[a-zA-Z]  OLD REGEX - \s(\w+(?:$|\s+))+ */
+    let matchedSongName = str.match(/[a-zA-Z]+\D+[a-zA-Z]/);
+
+    if (matchedSongName === null) {
+        result.songName = `UnknownSong${++this.unknownSongCounter}`;
+        return result;
+    } else {
+
+        /** REG FOR WORDS \s(\w+(?:$|\s+))+ */
+        result.songName = matchedSongName[0];
+        result.songName = result.songName.trim();
+    }
+
+    return result;
+}
 
 const showError = (error: string): void => {
     const alert = document.querySelector('.alert');

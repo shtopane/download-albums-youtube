@@ -1,4 +1,5 @@
-import { Playlist } from "./models/playlist";
+import * as regexConstants from '../constants/regex.constants';
+import { Playlist } from '../models/playlist';
 
 class Utils {
     private unknownSongCounter = 0;
@@ -12,11 +13,20 @@ class Utils {
         let strReplaced: string[];
         let songObjects: Playlist[] = [];
 
-        /** 
-         * trim whitespace .replace(/\s/g, "") 
-         * trim new lines /(\r\n|\n|\r)/gm
-         * */
-        strReplaced = str.split(/(\r\n|\n|\r)/gm);
+        // /** 
+        //  * trim whitespace .replace(/\s/g, "") 
+        //  * trim new lines /(\r\n|\n|\r)/gm
+        //  * */
+        // strReplaced = str.split(/(\r\n|\n|\r)/gm);
+
+        str = str.replace(regexConstants.bracketRegExp, '');
+        strReplaced = str.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+
+        if (strReplaced.length < 2) {
+            strReplaced = str.split(regexConstants.newLinesRegExp);
+        }
+
+        console.log('replaced string', strReplaced);
 
         let songObject: Playlist;
         let fullSongName: string;
@@ -62,10 +72,7 @@ class Utils {
 
         let diff = secondSongDate.getTime() - firstSongDate.getTime();
         let seconds = Math.floor((diff / 1000));
-        console.log('getSecondsFromTimeString|firstDate', firstSongDate)
-        console.log('getSecondsFromTimeString|secondSongDate', secondSongDate)
-        console.log('getSecondsFromTimeString|diff', diff)
-        console.log('getSecondsFromTimeString|seconds', seconds)
+
         return seconds;
     }
 

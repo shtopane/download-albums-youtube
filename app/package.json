@@ -4,6 +4,7 @@
   "description": "download-albums-fe",
   "main": "script.js",
   "scripts": {
+    "start": "npm run webpack:watch",
     "tsc": "tsc",
     "tsc:watch": "tsc -w",
     "webpack": "webpack",
