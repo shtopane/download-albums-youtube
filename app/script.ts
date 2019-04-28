@@ -85,10 +85,7 @@ convertBtn.addEventListener('click', () => {
     }
 
     const body = JSON.stringify({ playlist: tracklistInfo, url: url });
-    // const playlist = getSongsObjects(tracklistInfo);
-    // console.log('playlistArr', playlist);
 
-    // return;
     showLoader(true);
 
     fetch(`${serverUrl}/songs`, {
@@ -118,96 +115,6 @@ convertBtn.addEventListener('click', () => {
         });
 });
 
-const getSongsObjects = (playlist: string): Playlist[] => {
-    if (!playlist || playlist === null) {
-        throw new Error('No playlist!');
-    }
-    console.log('playlist str', playlist);
-    const minimumAcceptedSongsComputed = 2;
-    let numberOfSongsInPlaylist = getLengthOfTracklist(playlist);
-    console.log('number of songs', numberOfSongsInPlaylist);
-    let str = playlist;
-    let computedPlaylist: string[];
-    let songObjects: Playlist[] = [];
-
-    /** replace closing bracket with empty string(if any) */
-    playlist = playlist.replace(regexConstants.bracketRegExp, '');
-    computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
-
-    if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
-        computedPlaylist = playlist.split(regexConstants.newLinesRegExp);
-
-        if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
-            computedPlaylist = playlist.split(regexConstants.whiteSpaceBeforeDigitRegExp);
-        }
-    }
-
-    console.log('replaced string', computedPlaylist);
-
-    let songObject: Playlist;
-    let fullSongName: string;
-
-    for (let replacedString of computedPlaylist) {
-        if (replacedString.trim()) {
-            fullSongName = replacedString.trim();
-
-            songObject = cutStringToTimeOnly(fullSongName);
-            if (songObject && Object.keys(songObject).length > 0) {
-                songObjects.push(songObject)
-            }
-        }
-    }
-
-    return songObjects.slice();
-}
-
-const cutStringToTimeOnly = (str: string): Playlist => {
-    if (!str || str === null) {
-        throw new Error('No input string provided!');
-    }
-
-    let result: Playlist = {
-        songBegin: undefined,
-        songName: undefined
-    };
-
-    let matchedTime = str.match(regexConstants.trackTimeRegExp);
-
-    if (matchedTime === null) {
-        return;
-    } else {
-        result.songBegin = matchedTime[0];
-    }
-
-    let matchedSongName = str.match(regexConstants.trackNameRegExp);
-
-    if (matchedSongName === null) {
-        result.songName = `UnknownSong${++unknownSongCounter}`;
-        return result;
-    } else {
-        result.songName = matchedSongName[0];
-        result.songName = result.songName.trim();
-    }
-
-    return result;
-}
-
-const getLengthOfTracklist = (playlistStr: string): number => {
-    let result: number;
-    let songNumbers = playlistStr.match(regexConstants.numberFollowedByDotRegExp);
-
-    if (songNumbers === null) {
-        return result;
-    }
-
-    let lastSongNumber = songNumbers[songNumbers.length - 1]
-
-    lastSongNumber = lastSongNumber.replace(/\D/, '')
-    result = !isNaN(+lastSongNumber) ? +lastSongNumber : undefined;
-
-    return result;
-}
-
 const showError = (error: string): void => {
     const alert = document.querySelector('.alert');
     const alertText = document.querySelector('.alert-text');
@@ -219,7 +126,6 @@ const showError = (error: string): void => {
         alert.classList.add('hidden');
     }, 5000);
 };
-
 
 const showLoader = (showLoader: boolean): void => {
     if (showLoader) {
