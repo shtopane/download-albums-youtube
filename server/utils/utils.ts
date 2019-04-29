@@ -8,11 +8,8 @@ class Utils {
         if (!playlist || playlist === null) {
             throw new Error('No playlist!');
         }
-        console.log('playlist str', playlist);
         const minimumAcceptedSongsComputed = 2;
         let numberOfSongsInPlaylist = this.getLengthOfTracklist(playlist);
-        console.log('number of songs', numberOfSongsInPlaylist);
-        let str = playlist;
         let computedPlaylist: string[];
         let songObjects: Playlist[] = [];
 
@@ -27,8 +24,6 @@ class Utils {
                 computedPlaylist = playlist.split(regexConstants.whiteSpaceBeforeDigitRegExp);
             }
         }
-
-        console.log('replaced string', computedPlaylist);
 
         let songObject: Playlist;
         let fullSongName: string;
@@ -105,12 +100,9 @@ class Utils {
 
     public getHoursFromSeconds(lengthInSeconds: string): { hours: number; minutes: number; seconds: number } {
         const duration = Number(lengthInSeconds);
-        console.log('getHoursFromSeconds|duration', duration);
         const hours = Math.floor(duration / 3600);
         const minutes = Math.floor(duration % 3600 / 60);
         const seconds = Math.floor(duration % 3600 % 60);
-
-        console.log(`Hours: ${hours}, minutes: ${minutes}, seconds: ${seconds}`);
 
         return {
             hours: hours,

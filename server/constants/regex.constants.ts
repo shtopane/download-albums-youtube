@@ -1,6 +1,4 @@
-/** match closing bracket /(?<=\d)[)](?=\s)/gm. TODO: This regex uses lookbehind which is not supported in all browsers
- *  or environments. Check that!
-*/
+/* match closing bracket /(?<=\d)[)](?=\s)/gm. */
 export const bracketRegExp = /(?<=\d)[)](?=\s)/gm; // /[)]/gm;
 /** match new lines /(\r\n|\n|\r)/gm */
 export const newLinesRegExp = /(\r\n|\n|\r)/gm;
