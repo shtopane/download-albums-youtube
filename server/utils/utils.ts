@@ -1,4 +1,5 @@
-import { Playlist } from "./models/playlist";
+import * as regexConstants from '../constants/regex.constants';
+import { Playlist } from '../models/playlist';
 
 class Utils {
     private unknownSongCounter = 0;
@@ -7,41 +8,72 @@ class Utils {
         if (!playlist || playlist === null) {
             throw new Error('No playlist!');
         }
-
-        let str = playlist;
-        let strReplaced: string[];
+        const minimumAcceptedSongsComputed = 2;
+        let numberOfSongsInPlaylist = this.getLengthOfTracklist(playlist);
+        let computedPlaylist: string[];
         let songObjects: Playlist[] = [];
 
-        /** 
-         * trim whitespace .replace(/\s/g, "") 
-         * trim new lines /(\r\n|\n|\r)/gm
-         * */
-        strReplaced = str.split(/(\r\n|\n|\r)/gm);
+        /** replace closing bracket with empty string(if any) */
+        playlist = playlist.replace(regexConstants.bracketRegExp, '');
+        computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+
+        if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
+            computedPlaylist = playlist.split(regexConstants.newLinesRegExp);
+
+            if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
+                computedPlaylist = playlist.split(regexConstants.whiteSpaceBeforeDigitRegExp);
+            }
+        }
 
         let songObject: Playlist;
         let fullSongName: string;
 
-        for (let replacedString of strReplaced) {
+        for (let replacedString of computedPlaylist) {
             if (replacedString.trim()) {
                 fullSongName = replacedString.trim();
-
                 songObject = this.cutStringToTimeOnly(fullSongName);
-                songObjects.push(songObject)
+
+                if (songObject && Object.keys(songObject).length > 0) {
+                    songObjects.push(songObject)
+                }
             }
         }
 
         return songObjects.slice();
     }
 
+    /** Get the last number of the tracklist. With this we are getting the length of the tracklist. */
+    public getLengthOfTracklist(playlistStr: string): number {
+        let result: number;
+        let songNumbers = playlistStr.match(regexConstants.numberFollowedByDotRegExp);
+
+        if (songNumbers === null) {
+            return result;
+        }
+
+        let lastSongNumber = songNumbers[songNumbers.length - 1];
+
+        lastSongNumber = lastSongNumber.replace(regexConstants.nonDigitRegExp, '')
+        result = !isNaN(+lastSongNumber) ? +lastSongNumber : undefined;
+
+        return result;
+    }
+
     /** Get seconds from tracklist item time - the format is Min:Sec -> so 01:16 */
     public getSecondsFromTimeString(videoTotalSeconds: string, timeFirstSong: string, timeSecondSong: string): number {
         videoTotalSeconds = videoTotalSeconds || '0';
+
         let totalVideoLength = this.getHoursFromSeconds(videoTotalSeconds);
         let hours = totalVideoLength.hours;
 
         let firstSongTimesArr = timeFirstSong.split(':');
         let secondSongTimesArr = timeSecondSong.split(':');
 
+        /** If the user passed the play time in the format 03:25 but the file is longer than and hour,
+         *  then we will have the times arrays have length less than 3. So just the minutes and seconds set.
+         *  We need the hours, minutes and seconds set in this case.
+         *  TODO: If this is the case prefix the hour automatically.
+         */
         if (hours > 0 && (firstSongTimesArr.length < 3 || secondSongTimesArr.length < 3)) {
             /** Invalid playlist case */
             return null;
@@ -62,21 +94,15 @@ class Utils {
 
         let diff = secondSongDate.getTime() - firstSongDate.getTime();
         let seconds = Math.floor((diff / 1000));
-        console.log('getSecondsFromTimeString|firstDate', firstSongDate)
-        console.log('getSecondsFromTimeString|secondSongDate', secondSongDate)
-        console.log('getSecondsFromTimeString|diff', diff)
-        console.log('getSecondsFromTimeString|seconds', seconds)
+
         return seconds;
     }
 
     public getHoursFromSeconds(lengthInSeconds: string): { hours: number; minutes: number; seconds: number } {
         const duration = Number(lengthInSeconds);
-        console.log('getHoursFromSeconds|duration', duration);
         const hours = Math.floor(duration / 3600);
         const minutes = Math.floor(duration % 3600 / 60);
         const seconds = Math.floor(duration % 3600 % 60);
-
-        console.log(`Hours: ${hours}, minutes: ${minutes}, seconds: ${seconds}`);
 
         return {
             hours: hours,
@@ -91,34 +117,24 @@ class Utils {
         }
 
         let result: Playlist = {
-            songBegin: '',
-            songName: ''
+            songBegin: undefined,
+            songName: undefined
         };
 
-        /** 
-         * Regular expression for digits and :(2 : and 3 couple of digits) -  \d*[:]*\d*[:]\d*
-         * Used to extract playable times from tracklist item - so for example if the tracklist item is
-         * Hope & Pray - 00:00
-         * We want the time that this song is played in the playlist (00:00)
-         * */
-        let matchedTime = str.match(/\d*[:]*\d+[:]\d+/);
+        let matchedTime = str.match(regexConstants.trackTimeRegExp);
 
         if (matchedTime === null) {
-            result.songBegin = '0:00'
-            return result;
+            return;
         } else {
             result.songBegin = matchedTime[0];
         }
 
-        /** New Regex -  [a-zA-Z]+\D+[a-zA-Z]  OLD REGEX - \s(\w+(?:$|\s+))+ */
-        let matchedSongName = str.match(/[a-zA-Z]+\D+[a-zA-Z]/);
+        let matchedSongName = str.match(regexConstants.trackNameRegExp);
 
         if (matchedSongName === null) {
             result.songName = `UnknownSong${++this.unknownSongCounter}`;
             return result;
         } else {
-
-            /** REG FOR WORDS \s(\w+(?:$|\s+))+ */
             result.songName = matchedSongName[0];
             result.songName = result.songName.trim();
         }

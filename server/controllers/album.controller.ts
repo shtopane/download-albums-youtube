@@ -2,12 +2,12 @@ import * as express from 'express';
 import * as ytdl from 'ytdl-core';
 import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
+import chalk from 'chalk';
 
-import { utils } from '../utils';
+import { utils } from '../utils/utils';
 import { Playlist } from '../models/playlist';
 import { BaseResponse } from '../models/base-response';
 import { PlaylistResponse } from '../models/playlist-response';
-import { resolve } from 'path';
 
 export class AlbumController {
     public req: express.Request;
@@ -50,7 +50,12 @@ export class AlbumController {
         }
 
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
-        this.videoYoutubePath = `output/${this.fileTitle}.avi`;
+
+        const rootOutDir = 'output';
+        if (!fs.existsSync(rootOutDir)) {
+            fs.mkdirSync(rootOutDir);
+        }
+        this.videoYoutubePath = `${rootOutDir}/${this.fileTitle}.avi`;
 
         /** Calculate duration for the first song. Calculate here so that if the tracklist in invalid
         *   the user will get to know quickly?
@@ -70,12 +75,10 @@ export class AlbumController {
         })
             .pipe(fs.createWriteStream(this.videoYoutubePath))
             .on('finish', () => {
-                console.log('download completed!', 'color: red;')
+                console.log(chalk.yellow('album downloaded!'));
                 this.storeFile(this.playlistArr[0].songBegin, this.duration, this.playlistArr[0].songName);
             });
     }
-
-
 
     public handlePlaylist(req: express.Request, res: express.Response) {
         for (let track of this.playlistArr) {
@@ -100,9 +103,15 @@ export class AlbumController {
             fs.mkdirSync(outPutDir);
         }
 
-        console.log(`Seektime : ${seekTime}, Duration: ${duration}, File: ${outputFileName}`);
         let audioFileName = `${outPutDir}/${outputFileName}.mp3`;
         let stream: fs.WriteStream = fs.createWriteStream(audioFileName);
+        console.log(
+            chalk.yellowBright(`
+            Seektime : ${seekTime}, 
+            Duration: ${duration}, 
+            File: ${outputFileName}, 
+            Destination: ${audioFileName}, 
+            Source: ${this.videoYoutubePath}`));
 
         ffmpeg(fs.createReadStream(this.videoYoutubePath))
             /** currentSeekTime */
@@ -112,8 +121,11 @@ export class AlbumController {
             .on('end', () => {
                 this.onEnd();
             })
-            .on('stderr', (line) => {
-                console.log(`command line: ${line}`);
+            .on('stderr', (line: string) => {
+                if (line.indexOf('size=') > -1) {
+
+                    console.log(`command line: ${line}`);
+                }
             })
             .on('error', (err) => {
                 this.onError(err);
@@ -122,17 +134,20 @@ export class AlbumController {
     }
 
     private onError(err: any): void {
-        console.log('error happended: ', err);
-        this.res.status(500).json({ errorMessage: err, success: false });
+        console.log(chalk.redBright('error happended: ', err));
+        // this.res.status(500).json({ errorMessage: err.message, success: false });
     }
 
     private onEnd(): void {
         /** if we reached the end of the tracklist or the tracklist is 2 of length(1 song out of the whole album?
          *  Remove if this is not logical at all.) 
          */
+        console.log(chalk.gray(`counter: ${this.counter}`));
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
-            console.log('NO MORE SONGS!');
+            console.log(chalk.green('NO MORE SONGS!'));
             this.res.status(200).json({ success: true });
+            this.res.end();
+            this.counter = 0;
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {

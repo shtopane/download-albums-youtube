@@ -3,3 +3,4 @@ app/build/**
 app/dist/**
 server/node_modules
 server/output
+*txt
