@@ -61,5 +61,3 @@ const fetchPlaylist = (): void => {
             domUtils.addListenLinks(albumInfo.albumName, serverUrl);
         });
 }
-
-// generatePlaylist(playlist.playlist, playlist.albumName);
