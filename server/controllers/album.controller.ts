@@ -26,13 +26,14 @@ export class AlbumController {
 
     private counter = 1;
 
-    public async handleAlbumSlicing(req: express.Request, res: express.Response) {
+    public async handleAlbumSlicing(req: express.Request, res: express.Response): Promise<void> {
         this.req = req;
         this.res = res;
 
         this.playlist = this.req.body.playlist;
         this.url = this.req.body.url;
         this.playlistArr = utils.getSongsObjects(this.playlist);
+        console.log('playlist ready!', this.playlistArr);
 
         let formats: ytdl.videoFormat[];
         let chosenFormat: ytdl.videoFormat | string;
@@ -80,7 +81,7 @@ export class AlbumController {
             });
     }
 
-    public handlePlaylist(req: express.Request, res: express.Response) {
+    public handlePlaylist(req: express.Request, res: express.Response): void {
         for (let track of this.playlistArr) {
             track.tumbnail = this.tumbnailUrl;
         }
@@ -145,9 +146,8 @@ export class AlbumController {
         console.log(chalk.gray(`counter: ${this.counter}`));
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
             console.log(chalk.green('NO MORE SONGS!'));
-            this.res.status(200).json({ success: true });
-            this.res.end();
             this.counter = 0;
+            this.res.status(200).json({ success: true });
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {
@@ -176,7 +176,7 @@ export class AlbumController {
             .json({ errorMessage: 'You cannot send only 1 track in an album!', success: false } as BaseResponse);
     }
 
-    private invalidPlaylistErrorHandle() {
+    private invalidPlaylistErrorHandle(): void {
         this.res.status(500).json(
             {
                 errorMessage: 'Invalid tracklist!',

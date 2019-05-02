@@ -12,5 +12,6 @@ const downloadController = new DownloadController();
 app.post('/songs', albumController.handleAlbumSlicing.bind(albumController));
 app.get('/playlist', albumController.handlePlaylist.bind(albumController));
 
-app.get('/download', downloadController.handleDownload.bind(downloadController));
-app.get('/listen', downloadController.handleListen.bind(downloadController));
+app.get('/download', downloadController.handleDownloadSong.bind(downloadController));
+app.get('/downloadZip', downloadController.hanldeDownloadZip.bind(downloadController));
+app.get('/listen', downloadController.handleListenSong.bind(downloadController));
