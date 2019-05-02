@@ -56,17 +56,7 @@ downloadZipBtn.addEventListener('click', (event) => {
     const target: HTMLButtonElement = <HTMLButtonElement>event.target;
     const dataDownloadZip = target.getAttribute('data-download-zip');
 
-    const body = {
-        albumName: dataDownloadZip
-    };
     window.open(`${serverUrl}/downloadZip?albumName=${dataDownloadZip}`, '_blank');
-    // fetch(`${serverUrl}/downloadZip`, {
-    //     method: 'POST',
-    //     body: JSON.stringify(body),
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //     }
-    // }).then(res => res.json()).then(zip => console.log('downloadZip', zip))
 });
 
 const fetchPlaylist = (): void => {

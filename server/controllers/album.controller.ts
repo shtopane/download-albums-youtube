@@ -95,6 +95,7 @@ export class AlbumController {
         };
 
         res.status(200).json(response);
+        res.end();
     }
 
     private storeFile(seekTime: string, duration: number, outputFileName: string): void {
