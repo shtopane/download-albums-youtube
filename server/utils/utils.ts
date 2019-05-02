@@ -1,6 +1,12 @@
 import * as regexConstants from '../constants/regex.constants';
 import { Playlist } from '../models/playlist';
+import chalk from 'chalk';
 
+
+/*
+ *  Check how many times a char is in string -> .split( new RegExp( ":", "gi" ) ).length-1 
+ *  https://stackoverflow.com/a/2903576
+ */
 class Utils {
     private unknownSongCounter = 0;
 
@@ -8,20 +14,24 @@ class Utils {
         if (!playlist || playlist === null) {
             throw new Error('No playlist!');
         }
-        const minimumAcceptedSongsComputed = 2;
+        const minimumAcceptedSongsComputed = 3;
         let numberOfSongsInPlaylist = this.getLengthOfTracklist(playlist);
         let computedPlaylist: string[];
         let songObjects: Playlist[] = [];
 
         /** replace closing bracket with empty string(if any) */
-        playlist = playlist.replace(regexConstants.bracketRegExp, '');
-        computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+        // playlist = playlist.replace(regexConstants.bracketRegExp, '');
 
+        /** TODO: Wrong logic! We spit it one way and if it is not efficient, we try the others. */
+        computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+        console.log('computed first time', computedPlaylist);
         if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
             computedPlaylist = playlist.split(regexConstants.newLinesRegExp);
-
+            console.log('newLinesRegExp matched second time', computedPlaylist);
             if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
+
                 computedPlaylist = playlist.split(regexConstants.whiteSpaceBeforeDigitRegExp);
+                console.log('whiteSpaceBeforeDigitRegExp matched 3 time', computedPlaylist);
             }
         }
 
@@ -30,6 +40,7 @@ class Utils {
 
         for (let replacedString of computedPlaylist) {
             if (replacedString.trim()) {
+                console.log(chalk.bold('replaced string not trimmed', replacedString));
                 fullSongName = replacedString.trim();
                 songObject = this.cutStringToTimeOnly(fullSongName);
 
@@ -130,6 +141,7 @@ class Utils {
         }
 
         let matchedSongName = str.match(regexConstants.trackNameRegExp);
+        console.log(chalk.bgBlack('original string', str));
 
         if (matchedSongName === null) {
             result.songName = `UnknownSong${++this.unknownSongCounter}`;
@@ -137,6 +149,7 @@ class Utils {
         } else {
             result.songName = matchedSongName[0];
             result.songName = result.songName.trim();
+            console.log(chalk.bgGreen('matched song name', result.songName));
         }
 
         return result;
