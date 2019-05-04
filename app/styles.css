@@ -5,6 +5,12 @@ body {
     margin: 0;
 }
 
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+
 p,
 ul {
     margin: 0;
@@ -12,12 +18,14 @@ ul {
 
 /* UI Kit overrides */
 .uk-button-danger,
-.uk-alert-danger {
+.uk-alert-danger,
+.uk-button-danger:focus {
     background-color: #e50000;
 }
 
-.uk-button-danger:hover {
-    background-color: #e50000;
+.uk-button-danger:hover,
+.uk-button-danger:active {
+    background-color: #ce0000;
 }
 
 .uk-alert-danger {
@@ -64,6 +72,7 @@ ul {
     margin: auto;
     color: #282828;
     text-align: center;
+    min-height: 100%;
 }
 
 #input-wrap {

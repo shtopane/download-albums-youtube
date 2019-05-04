@@ -17,6 +17,8 @@ export const numberFollowedByDotRegExp = /(\d+[.])/gm;
  * */
 export const trackTimeRegExp = /\d*[:]*\d+[:]\d+/;
 /** match track name. TODO: this does not include some special characters at the end like ')'. [a-zA-Z]+\D+[a-zA-Z] */
-export const trackNameRegExp = /[a-zA-Z]+\D+[a-zA-Z]/;
+/** EXPERIMENTAL (?<=\s)\w\D+(?!=>\s)[a-zA-Z] */
+/** EXPERIMENTAL 2 /(?<=\s)(\D+\w\W?)(?=\s)/gm */
+export const trackNameRegExp = /(?<=\s)(\D+\w\W?)(?=\s)/gm;
 /** match non digit single character /\D/ */
 export const nonDigitRegExp = /\D/;

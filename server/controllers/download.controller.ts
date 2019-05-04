@@ -1,9 +1,11 @@
 import * as express from 'express';
+import * as fs from 'fs';
+import * as archiver from 'archiver';
 
 import { BaseResponse } from '../models/base-response';
 
 export class DownloadController {
-    public handleDownload(req: express.Request, res: express.Response) {
+    public handleDownloadSong(req: express.Request, res: express.Response) {
         const albumName = req.query.albumName;
         const songName = req.query.songName;
         console.log(albumName);
@@ -24,13 +26,14 @@ export class DownloadController {
         });
     }
 
-    public handleListen(req: express.Request, res: express.Response, next: express.NextFunction) {
+    public handleListenSong(req: express.Request, res: express.Response, next: express.NextFunction) {
         const albumName = req.query.albumName;
-        console.log(__dirname + '/output/' + albumName + '/');
+        const songName = req.query.songName;
+
         const options = {
             root: `output/${albumName}`
         };
-        const songName = req.query.songName;
+
         res.sendFile(`${songName}.mp3`, options, function (err) {
             if (err) {
                 next(err);
@@ -38,6 +41,63 @@ export class DownloadController {
                 console.log('Sent:', songName);
             }
         });
-        // res.sendFile(`output/${albumName}/${songName}`);
+    }
+
+    public hanldeDownloadZip(req: express.Request, res: express.Response, next: express.NextFunction) {
+        const albumName = req.query.albumName;
+        const zipDir = `output/zips`;
+        const zip = archiver('zip', {
+            zlib: { level: 9 } // Sets the compression level.
+        });
+
+        if (!fs.existsSync(zipDir)) {
+            fs.mkdirSync(zipDir);
+        }
+
+        const albumZiped = fs.createWriteStream(`${zipDir}/${albumName}.zip`);
+
+        // listen for all archive data to be written
+        // 'close' event is fired only when a file descriptor is involved
+        albumZiped.on('close', function () {
+            console.log(zip.pointer() + ' total bytes');
+            console.log('archiver has been finalized and the output file descriptor has closed.');
+            /** If I remove this, the download zip always has the same name */
+            res.attachment(`${zipDir}/${albumName}.zip`);
+            const options = {
+                root: `${zipDir}`
+            };
+
+            res.sendFile(`${albumName}.zip`, options, function (err) {
+                if (err) {
+                    next(err);
+                } else {
+                    console.log('Sent:', albumName);
+                }
+            });
+        });
+
+        // good practice to catch warnings (ie stat failures and other non-blocking errors)
+        zip.on('warning', function (err) {
+            if (err.code === 'ENOENT') {
+                // log warning
+                console.log('warning happened with zip: ', err);
+            } else {
+                // throw error
+                throw err;
+            }
+        });
+
+        // good practice to catch this error explicitly
+        zip.on('error', function (err) {
+            throw err;
+        });
+
+        // pipe archive data to the file
+        zip.pipe(albumZiped);
+        // append files from a sub-directory and naming it with the album name within the archive
+        zip.directory(`output/${albumName}`, `${albumName}`);
+        // finalize the archive (ie we are done appending files but streams have to finish yet)
+        // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
+        zip.finalize();
     }
 }

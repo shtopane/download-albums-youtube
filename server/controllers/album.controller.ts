@@ -26,13 +26,14 @@ export class AlbumController {
 
     private counter = 1;
 
-    public async handleAlbumSlicing(req: express.Request, res: express.Response) {
+    public async handleAlbumSlicing(req: express.Request, res: express.Response): Promise<void> {
         this.req = req;
         this.res = res;
 
         this.playlist = this.req.body.playlist;
         this.url = this.req.body.url;
         this.playlistArr = utils.getSongsObjects(this.playlist);
+        console.log('playlist ready!', this.playlistArr);
 
         let formats: ytdl.videoFormat[];
         let chosenFormat: ytdl.videoFormat | string;
@@ -48,7 +49,7 @@ export class AlbumController {
         } else {
             this.noVideoInfoErrorHandle();
         }
-
+        console.log(chalk.yellow('length of video', this.lengthInSeconds))
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
 
         const rootOutDir = 'output';
@@ -67,6 +68,7 @@ export class AlbumController {
                 this.playlistArr[1].songBegin);
 
         if (this.duration === null) {
+            console.log(chalk.red('ERROR!'));
             this.invalidPlaylistErrorHandle();
         }
 
@@ -80,7 +82,7 @@ export class AlbumController {
             });
     }
 
-    public handlePlaylist(req: express.Request, res: express.Response) {
+    public handlePlaylist(req: express.Request, res: express.Response): void {
         for (let track of this.playlistArr) {
             track.tumbnail = this.tumbnailUrl;
         }
@@ -94,6 +96,7 @@ export class AlbumController {
         };
 
         res.status(200).json(response);
+        res.end();
     }
 
     private storeFile(seekTime: string, duration: number, outputFileName: string): void {
@@ -135,7 +138,7 @@ export class AlbumController {
 
     private onError(err: any): void {
         console.log(chalk.redBright('error happended: ', err));
-        // this.res.status(500).json({ errorMessage: err.message, success: false });
+        this.res.status(500).json({ errorMessage: err.message, success: false });
     }
 
     private onEnd(): void {
@@ -145,9 +148,9 @@ export class AlbumController {
         console.log(chalk.gray(`counter: ${this.counter}`));
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
             console.log(chalk.green('NO MORE SONGS!'));
+            this.counter = 0;
             this.res.status(200).json({ success: true });
             this.res.end();
-            this.counter = 0;
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {
@@ -176,10 +179,10 @@ export class AlbumController {
             .json({ errorMessage: 'You cannot send only 1 track in an album!', success: false } as BaseResponse);
     }
 
-    private invalidPlaylistErrorHandle() {
+    private invalidPlaylistErrorHandle(): void {
         this.res.status(500).json(
             {
-                errorMessage: 'Invalid tracklist!',
+                errorMessage: 'Invalid tracklist! For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss.',
                 success: false
             } as BaseResponse);
         this.res.end();

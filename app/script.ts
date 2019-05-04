@@ -8,6 +8,7 @@ const serverUrl = 'http://localhost:4000';
 const convertBtn: HTMLButtonElement = document.querySelector('.convert-button');
 const inputEl: HTMLInputElement = document.querySelector('.URL-input');
 const textareaEl: HTMLTextAreaElement = document.querySelector('#description');
+const downloadZipBtn: HTMLButtonElement = document.querySelector('.download-zip-btn');
 const loader = document.getElementById('loader');
 const container = document.getElementById('container');
 const playlistEl = document.getElementById('playlist');
@@ -50,6 +51,14 @@ convertBtn.addEventListener('click', () => {
         });
 });
 
+/** RAGE AGAINST THE MACHINE  (Full Album 1992) */
+downloadZipBtn.addEventListener('click', (event) => {
+    const target: HTMLButtonElement = <HTMLButtonElement>event.target;
+    const dataDownloadZip = target.getAttribute('data-download-zip');
+
+    window.open(`${serverUrl}/downloadZip?albumName=${dataDownloadZip}`, '_blank');
+});
+
 const fetchPlaylist = (): void => {
     console.log(`done in - ${(Date.now() - start) / 1000}s`);
     fetch(`${serverUrl}/playlist`)
@@ -61,5 +70,3 @@ const fetchPlaylist = (): void => {
             domUtils.addListenLinks(albumInfo.albumName, serverUrl);
         });
 }
-
-// generatePlaylist(playlist.playlist, playlist.albumName);

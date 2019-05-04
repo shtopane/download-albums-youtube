@@ -2,7 +2,8 @@ import { Playlist } from "../models/playlist";
 
 export const generatePlaylist = (playlistArr: Playlist[], albumName: string, playlistEl: HTMLElement): void => {
     const tracklistEl = document.querySelector('.tracklist');
-    let albumTitle = <Element>playlistEl.querySelector('h2').cloneNode();
+    const downloadZipBtn = document.querySelector('.download-zip-btn');
+    let albumTitle = <Element>playlistEl.querySelector('h2');
     let tracklistCopy: HTMLDivElement;
     let currentTrack: Playlist;
     let downloadBtn: HTMLButtonElement;
@@ -10,8 +11,11 @@ export const generatePlaylist = (playlistArr: Playlist[], albumName: string, pla
     let tumbnailEl: HTMLImageElement;
     let songEl: HTMLSpanElement;
 
+    /** Set the album name in the Header and the download zip button */
     albumTitle.textContent = albumName;
     albumTitle.classList.remove('hidden');
+    downloadZipBtn.setAttribute('data-download-zip', albumName);
+    downloadZipBtn.classList.remove('hidden');
 
     for (let i = 0; i < playlistArr.length; i++) {
         currentTrack = playlistArr[i];
