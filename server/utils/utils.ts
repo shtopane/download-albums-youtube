@@ -74,11 +74,25 @@ class Utils {
     public getSecondsFromTimeString(videoTotalSeconds: string, timeFirstSong: string, timeSecondSong: string): number {
         videoTotalSeconds = videoTotalSeconds || '0';
 
-        let totalVideoLength = this.getHoursFromSeconds(videoTotalSeconds);
-        let hours = totalVideoLength.hours;
+        const totalVideoLength = this.getHoursFromSeconds(videoTotalSeconds);
+        const hours = totalVideoLength.hours;
+        console.log('hours:', hours)
 
-        let firstSongTimesArr = timeFirstSong.split(':');
-        let secondSongTimesArr = timeSecondSong.split(':');
+        const columnRegExp = new RegExp(":", "gi");
+        const columnsFirstSong = timeFirstSong.split(columnRegExp).length - 1;
+        const columnsSecondSong = timeSecondSong.split(columnRegExp).length - 1;
+
+        /** TODO: Test this. It should prefix the hour if there is none in the tracklist. */
+        if (columnsFirstSong < 2 && hours > 0) {
+            timeFirstSong = '00:' + timeFirstSong;
+            console.log('timesFirstSong', timeFirstSong);
+        }
+        if (columnsSecondSong < 2 && hours > 0) {
+            timeSecondSong = '00:' + timeSecondSong;
+        }
+
+        const firstSongTimesArr = timeFirstSong.split(':');
+        const secondSongTimesArr = timeSecondSong.split(':');
 
         /** If the user passed the play time in the format 03:25 but the file is longer than and hour,
          *  then we will have the times arrays have length less than 3. So just the minutes and seconds set.
@@ -87,11 +101,12 @@ class Utils {
          */
         if (hours > 0 && (firstSongTimesArr.length < 3 || secondSongTimesArr.length < 3)) {
             /** Invalid playlist case */
+
             return null;
         }
 
-        let firstSongDate = new Date();
-        let secondSongDate = new Date();
+        const firstSongDate = new Date();
+        const secondSongDate = new Date();
 
         if (hours === 0) {
             firstSongDate.setMinutes(+firstSongTimesArr[0], +firstSongTimesArr[1])
@@ -103,10 +118,10 @@ class Utils {
             secondSongDate.setMinutes(+secondSongTimesArr[1], +secondSongTimesArr[2])
         }
 
-        let diff = secondSongDate.getTime() - firstSongDate.getTime();
-        let seconds = Math.floor((diff / 1000));
+        const diff = secondSongDate.getTime() - firstSongDate.getTime();
+        const durationOfSong = Math.floor((diff / 1000));
 
-        return seconds;
+        return durationOfSong;
     }
 
     public getHoursFromSeconds(lengthInSeconds: string): { hours: number; minutes: number; seconds: number } {

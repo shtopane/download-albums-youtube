@@ -49,7 +49,7 @@ export class AlbumController {
         } else {
             this.noVideoInfoErrorHandle();
         }
-
+        console.log(chalk.yellow('length of video', this.lengthInSeconds))
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
 
         const rootOutDir = 'output';
@@ -68,6 +68,7 @@ export class AlbumController {
                 this.playlistArr[1].songBegin);
 
         if (this.duration === null) {
+            console.log(chalk.red('ERROR!'));
             this.invalidPlaylistErrorHandle();
         }
 
@@ -137,7 +138,7 @@ export class AlbumController {
 
     private onError(err: any): void {
         console.log(chalk.redBright('error happended: ', err));
-        // this.res.status(500).json({ errorMessage: err.message, success: false });
+        this.res.status(500).json({ errorMessage: err.message, success: false });
     }
 
     private onEnd(): void {
@@ -149,6 +150,7 @@ export class AlbumController {
             console.log(chalk.green('NO MORE SONGS!'));
             this.counter = 0;
             this.res.status(200).json({ success: true });
+            this.res.end();
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {
@@ -180,7 +182,7 @@ export class AlbumController {
     private invalidPlaylistErrorHandle(): void {
         this.res.status(500).json(
             {
-                errorMessage: 'Invalid tracklist!',
+                errorMessage: 'Invalid tracklist! For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss.',
                 success: false
             } as BaseResponse);
         this.res.end();
