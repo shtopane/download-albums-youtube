@@ -1,0 +1,6 @@
+<div id="input-wrap" [formGroup]="parent">
+  <input [formControlName]="controlName" class="URL-input uk-input"
+    placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
+  <button [disabled]="disabled" type="submit" class="convert-button uk-button uk-button-danger"
+    (click)="send.emit()">Send</button>
+</div>
