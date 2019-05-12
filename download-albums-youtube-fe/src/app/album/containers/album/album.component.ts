@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SliceDownloadAlbumService } from 'src/app/playlist/services/slice-download-album.service';
+import { SliceDownloadAlbumService } from 'src/app/shared/services/slice-download-album.service';
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';

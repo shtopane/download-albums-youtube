@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SliceDownloadAlbumService } from '../../services/slice-download-album.service';
+import { SliceDownloadAlbumService } from '../../../shared/services/slice-download-album.service';
 import { BaseResponse } from 'src/app/shared/models/base-response';
 import { Tracklist } from '../../models/tracklist';
 import { Router } from '@angular/router';
