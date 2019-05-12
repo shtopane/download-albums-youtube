@@ -4,6 +4,8 @@ import { PlaylistService } from '../../../shared/services/playlist.service';
 import { BaseResponse } from 'src/app/shared/models/base-response';
 import { Tracklist } from '../../models/tracklist';
 import { Router } from '@angular/router';
+import { AlertService } from 'src/app/shared/services/alert.service';
+import { LoaderService } from 'src/app/shared/services/loader.service';
 
 @Component({
   selector: 'app-playlist-form',
@@ -16,7 +18,9 @@ export class PlaylistFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private playlistService: PlaylistService,
-    private router: Router
+    private router: Router,
+    private loaderService: LoaderService,
+    private alertService: AlertService
   ) { }
 
   public get url(): string {
@@ -33,13 +37,8 @@ export class PlaylistFormComponent implements OnInit {
 
   public ngOnInit(): void {
     this.downloadAlbumForm = this.fb.group({
-      url: ['https://www.youtube.com/watch?v=pQCfnMeEv3w', Validators.required],
-      tracklist: [`
-      1. First part 0:00 
-      2. Second part  1:30 
-      3. Third part 2:15
-      `,
-        Validators.required]
+      url: ['', Validators.required],
+      tracklist: [``, Validators.required]
     });
   }
 
@@ -47,8 +46,10 @@ export class PlaylistFormComponent implements OnInit {
     console.log('submitted!', this.downloadAlbumForm);
 
     if (this.downloadAlbumForm.valid) {
+      this.loaderService.showLoader();
       /** Do something */
       this.playlistService.sendPlaylist(this.url, this.tracklist).subscribe((res: BaseResponse) => {
+        this.loaderService.hideLoader();
         console.log('response from server', res)
         if (res.success) {
           this.playlistService.getPlaylist()
@@ -57,6 +58,8 @@ export class PlaylistFormComponent implements OnInit {
               console.log('playlist?', res)
               this.router.navigate(['/album']);
             });
+        } else {
+          this.alertService.setMessage(res.errorMessage);
         }
       });
     }

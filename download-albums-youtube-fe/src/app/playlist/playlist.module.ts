@@ -7,12 +7,14 @@ import { PlaylistFormComponent } from './containers/playlist-form/playlist-form.
 import { HowToUseComponent } from './components/how-to-use/how-to-use.component';
 import { UrlInputComponent } from './components/url-input/url-input.component';
 import { TracklistTextareaComponent } from './components/tracklist-textarea/tracklist-textarea.component';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [PlaylistFormComponent, HowToUseComponent, UrlInputComponent, TracklistTextareaComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    SharedModule,
     PlaylistRoutingModule
   ]
 })

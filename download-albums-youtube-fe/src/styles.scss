@@ -36,8 +36,15 @@ ul {
     background-color: #e50000;
 }
 
+.uk-button-danger:disabled,
+.uk-button-danger:disabled:hover {
+    background-color: #a40000;
+    color: #999;
+}
+
 .uk-button-danger:hover,
-.uk-button-danger:active {
+.uk-button-danger:active,
+    {
     background-color: #ce0000;
 }
 
