@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { SliceDownloadAlbumService } from 'src/app/playlist/services/slice-download-album.service';
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-album',
@@ -11,7 +12,9 @@ import { Observable, of } from 'rxjs';
 export class AlbumComponent implements OnInit {
   public tracklist$: Observable<Tracklist>;
 
-  constructor(private sliceDownloadAlbumService: SliceDownloadAlbumService) { }
+  constructor(
+    private sliceDownloadAlbumService: SliceDownloadAlbumService
+  ) { }
 
   ngOnInit() {
     const t: Tracklist = {
@@ -34,7 +37,22 @@ export class AlbumComponent implements OnInit {
       ],
       albumName: "The Underground Youth - Alice (Official Video)",
     }
-    this.tracklist$ = of(t); // this.sliceDownloadAlbumService.getTracklist();
+    this.tracklist$ = this.sliceDownloadAlbumService.getTracklist();
+  }
+
+  public onDownloadClicked(albumName: string, songName: string): void {
+    const url = `${environment.serverUrl}/download?albumName=${albumName}&songName=${songName}`;
+    window.open(url, '_blank');
+  }
+
+  public onListenClicked(albumName: string, songName: string): void {
+    const url = `${environment.serverUrl}/listen?albumName=${albumName}&songName=${songName}`;
+    window.open(url, '_blank');
+  }
+
+  public onDownloadZipClicked(albumName: string): void {
+    const url = `${environment.serverUrl}/downloadZip?albumName=${albumName}`;
+    window.open(url, '_blank');
   }
 
 }

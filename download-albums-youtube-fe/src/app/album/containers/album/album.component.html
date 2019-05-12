@@ -2,7 +2,8 @@
 
 <section id="playlist" *ngIf="tracklist$ | async as tracklist">
   <div class="uk-flex uk-flex-right uk-padding-small">
-    <button class="uk-button uk-button-danger download-zip-btn hidden">Download ZIP</button>
+    <button class="uk-button uk-button-danger download-zip-btn"
+      (click)="onDownloadZipClicked(tracklist?.albumName);">Download ZIP</button>
   </div>
   <h2>{{tracklist?.albumName}}</h2>
   <div class="
@@ -19,8 +20,10 @@
       <span class="song-info">{{track.songName}} - {{track.songBegin}}</span>
     </div>
     <div class="uk-margin-auto-top">
-      <button class="uk-button uk-button-secondary uk-width-1-1 uk-margin-small-bottom download-btn">Download</button>
-      <button class="uk-button uk-button-primary uk-width-1-1 listen-btn">Listen</button>
+      <button class="uk-button uk-button-secondary uk-width-1-1 uk-margin-small-bottom download-btn"
+        (click)="onDownloadClicked(tracklist?.albumName, track?.songName);">Download</button>
+      <button class="uk-button uk-button-primary uk-width-1-1 listen-btn"
+        (click)="onListenClicked(tracklist?.albumName, track?.songName);">Listen</button>
     </div>
   </div>
 </section>
