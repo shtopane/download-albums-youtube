@@ -1,6 +1,6 @@
 import { TracklistItem } from "./tracklist-item";
 
 export interface Tracklist {
-    tracklistItems: TracklistItem[];
+    playlist: TracklistItem[];
     albumName: string;
 }

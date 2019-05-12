@@ -6,26 +6,24 @@
     <div></div>
   </div>
 </div>
-<div id="container" class="uk-background-muted uk-box-shadow-large uk-container">
-  <!-- TODO: ALERTS: MAKE SERVICE FOR SHOWING THEM -->
-  <div uk-alert class="uk-alert-danger hidden alert">
-    <p class="alert-text">Invalid tracklist!</p>
-  </div>
-  <h1 class="heading">Youtube Album Downloader</h1>
-  <form [formGroup]="downloadAlbumForm">
+<!-- TODO: ALERTS: MAKE SERVICE FOR SHOWING THEM -->
+<div uk-alert class="uk-alert-danger hidden alert">
+  <p class="alert-text">Invalid tracklist!</p>
+</div>
+<h1>Youtube Album Downloader</h1>
+<form [formGroup]="downloadAlbumForm">
 
-    <!-- <div id="input-wrap">
+  <!-- <div id="input-wrap">
       <input class="URL-input uk-input" placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q">
       <button type="submit" class="convert-button uk-button uk-button-danger">Send</button>
     </div> -->
-    <app-url-input controlName="url" [parent]="downloadAlbumForm" [disabled]="disabled" (send)="onSubmit()">
-    </app-url-input>
-    <app-how-to-use></app-how-to-use>
-    <app-tracklist-textarea controlName="tracklist" [parent]="downloadAlbumForm"></app-tracklist-textarea>
-    <!-- <textarea class="uk-textarea" name="description" id="description" rows="15"
+  <app-url-input controlName="url" [parent]="downloadAlbumForm" [disabled]="disabled" (send)="onSubmit()">
+  </app-url-input>
+  <app-how-to-use></app-how-to-use>
+  <app-tracklist-textarea controlName="tracklist" [parent]="downloadAlbumForm"></app-tracklist-textarea>
+  <!-- <textarea class="uk-textarea" name="description" id="description" rows="15"
       placeholder="Paste the tracklist of the album. Format is hh:mm:ss"></textarea> -->
-  </form>
-</div>
+</form>
 
 <!-- Playlist  -->
 <!-- <section id="playlist">

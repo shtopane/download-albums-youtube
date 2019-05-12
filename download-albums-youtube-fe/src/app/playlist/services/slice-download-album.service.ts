@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { Tracklist } from '../models/tracklist';
@@ -10,6 +10,7 @@ import { Tracklist } from '../models/tracklist';
   providedIn: 'root'
 })
 export class SliceDownloadAlbumService {
+  private tracklist: Tracklist;
 
   constructor(private http: HttpClient) { }
 
@@ -19,5 +20,16 @@ export class SliceDownloadAlbumService {
 
   public getPlaylist(): Observable<Tracklist> {
     return this.http.get<Tracklist>(`${environment.serverUrl}/playlist`);
+  }
+
+  public setTracklist(tracklist: Tracklist): void {
+    console.log('tracklist in service', tracklist);
+    if (tracklist.albumName && tracklist.playlist) {
+      this.tracklist = tracklist;
+    }
+  }
+
+  public getTracklist(): Observable<Tracklist> {
+    return of({ ...this.tracklist });
   }
 }

@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SliceDownloadAlbumService } from '../../services/slice-download-album.service';
+import { BaseResponse } from 'src/app/shared/models/base-response';
+import { Tracklist } from '../../models/tracklist';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-download-album-form',
@@ -12,7 +15,8 @@ export class DownloadAlbumFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private sliceDownloadAlbumService: SliceDownloadAlbumService
+    private sliceDownloadAlbumService: SliceDownloadAlbumService,
+    private router: Router
   ) { }
 
   public get url(): string {
@@ -44,13 +48,40 @@ export class DownloadAlbumFormComponent implements OnInit {
 
     if (this.downloadAlbumForm.valid) {
       /** Do something */
-      this.sliceDownloadAlbumService.sliceDownloadAlbum(this.url, this.tracklist).subscribe(res => {
+      this.sliceDownloadAlbumService.sliceDownloadAlbum(this.url, this.tracklist).subscribe((res: BaseResponse) => {
         console.log('response from server', res)
         if (res.success) {
-          this.sliceDownloadAlbumService.getPlaylist().subscribe(res => console.log('playlist?', res));
+          this.sliceDownloadAlbumService.getPlaylist()
+            .subscribe((res: Tracklist & BaseResponse) => {
+              this.sliceDownloadAlbumService.setTracklist({ albumName: res.albumName, playlist: res.playlist });
+              console.log('playlist?', res)
+              this.router.navigate(['/album']);
+            });
         }
       });
     }
   }
 
 }
+
+// const p = {
+//   "playlist": [
+//     {
+//       "songBegin": "0:00",
+//       "songName": "First part",
+//       "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
+//     },
+//     {
+//       "songBegin": "1:30",
+//       "songName": "Second part",
+//       "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
+//     },
+//     {
+//       "songBegin": "2:15",
+//       "songName": "Third part",
+//       "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
+//     }
+//   ],
+//   "albumName": "The Underground Youth - Alice (Official Video)",
+//   "success": true
+// };
