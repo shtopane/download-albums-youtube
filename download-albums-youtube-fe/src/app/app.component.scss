@@ -3,8 +3,16 @@
     // justify-content: center;
     flex-direction: column;
     width: 50%;
-    margin: auto;
+    margin-left: auto;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
     color: #282828;
     text-align: center;
     min-height: 100%;
+}
+
+@media(min-width: 460px) and (max-width: 1000px) {
+    #container {
+        width: 100%;
+    }
 }

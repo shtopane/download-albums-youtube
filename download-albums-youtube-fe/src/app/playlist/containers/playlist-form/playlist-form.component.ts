@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { PlaylistService } from '../../../shared/services/playlist.service';
+import { PlaylistService } from '../../../shared/services/playlist/playlist.service';
 import { BaseResponse } from 'src/app/shared/models/base-response';
 import { Tracklist } from '../../models/tracklist';
 import { Router } from '@angular/router';
-import { AlertService } from 'src/app/shared/services/alert.service';
-import { LoaderService } from 'src/app/shared/services/loader.service';
+import { AlertService } from 'src/app/shared/services/alert/alert.service';
+import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 
 @Component({
   selector: 'app-playlist-form',

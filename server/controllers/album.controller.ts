@@ -72,14 +72,20 @@ export class AlbumController {
             this.invalidPlaylistErrorHandle();
         }
 
-        ytdl(this.url, {
-            format: (chosenFormat || 'avi') as ytdl.videoFormat,
-        })
-            .pipe(fs.createWriteStream(this.videoYoutubePath))
-            .on('finish', () => {
-                console.log(chalk.yellow('album downloaded!'));
-                this.storeFile(this.playlistArr[0].songBegin, this.duration, this.playlistArr[0].songName);
-            });
+        try {
+            ytdl(this.url, {
+                format: (chosenFormat || 'avi') as ytdl.videoFormat,
+            })
+                .pipe(fs.createWriteStream(this.videoYoutubePath))
+                .on('finish', () => {
+                    console.log(chalk.yellow('album downloaded!'));
+                    this.storeFile(this.playlistArr[0].songBegin, this.duration, this.playlistArr[0].songName);
+                });
+        } catch (error) {
+            res.status(500).send({ errorMessage: error, success: false });
+            res.end();
+        }
+
     }
 
     public handlePlaylist(req: express.Request, res: express.Response): void {

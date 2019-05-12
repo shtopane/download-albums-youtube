@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { Tracklist } from '../../playlist/models/tracklist';
+import { Tracklist } from 'src/app/playlist/models/tracklist';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +30,10 @@ export class PlaylistService {
   }
 
   public getTracklist(): Observable<Tracklist> {
+    const localTracklist = JSON.parse(localStorage.getItem('playlist'));
+    if (!this.tracklist) {
+      this.tracklist = localTracklist;
+    }
     return of({ ...this.tracklist });
   }
 }

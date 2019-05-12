@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PlaylistService } from 'src/app/shared/services/playlist.service';
+import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
