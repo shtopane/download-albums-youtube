@@ -1,21 +1,21 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { SliceDownloadAlbumService } from '../../../shared/services/slice-download-album.service';
+import { PlaylistService } from '../../../shared/services/playlist.service';
 import { BaseResponse } from 'src/app/shared/models/base-response';
 import { Tracklist } from '../../models/tracklist';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-download-album-form',
-  templateUrl: './download-album-form.component.html',
-  styleUrls: ['./download-album-form.component.scss']
+  selector: 'app-playlist-form',
+  templateUrl: './playlist-form.component.html',
+  styleUrls: ['./playlist-form.component.scss']
 })
-export class DownloadAlbumFormComponent implements OnInit {
+export class PlaylistFormComponent implements OnInit {
   public downloadAlbumForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
-    private sliceDownloadAlbumService: SliceDownloadAlbumService,
+    private playlistService: PlaylistService,
     private router: Router
   ) { }
 
@@ -48,12 +48,12 @@ export class DownloadAlbumFormComponent implements OnInit {
 
     if (this.downloadAlbumForm.valid) {
       /** Do something */
-      this.sliceDownloadAlbumService.sliceDownloadAlbum(this.url, this.tracklist).subscribe((res: BaseResponse) => {
+      this.playlistService.sendPlaylist(this.url, this.tracklist).subscribe((res: BaseResponse) => {
         console.log('response from server', res)
         if (res.success) {
-          this.sliceDownloadAlbumService.getPlaylist()
+          this.playlistService.getPlaylist()
             .subscribe((res: Tracklist & BaseResponse) => {
-              this.sliceDownloadAlbumService.setTracklist({ albumName: res.albumName, playlist: res.playlist });
+              this.playlistService.setTracklist({ albumName: res.albumName, playlist: res.playlist });
               console.log('playlist?', res)
               this.router.navigate(['/album']);
             });
@@ -63,25 +63,3 @@ export class DownloadAlbumFormComponent implements OnInit {
   }
 
 }
-
-// const p = {
-//   "playlist": [
-//     {
-//       "songBegin": "0:00",
-//       "songName": "First part",
-//       "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
-//     },
-//     {
-//       "songBegin": "1:30",
-//       "songName": "Second part",
-//       "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
-//     },
-//     {
-//       "songBegin": "2:15",
-//       "songName": "Third part",
-//       "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
-//     }
-//   ],
-//   "albumName": "The Underground Youth - Alice (Official Video)",
-//   "success": true
-// };

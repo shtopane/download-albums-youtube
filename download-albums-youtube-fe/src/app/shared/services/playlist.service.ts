@@ -9,12 +9,12 @@ import { Tracklist } from '../../playlist/models/tracklist';
 @Injectable({
   providedIn: 'root'
 })
-export class SliceDownloadAlbumService {
+export class PlaylistService {
   private tracklist: Tracklist;
 
   constructor(private http: HttpClient) { }
 
-  public sliceDownloadAlbum(url: string, tracklist: string): Observable<any> {
+  public sendPlaylist(url: string, tracklist: string): Observable<any> {
     return this.http.post(`${environment.serverUrl}/songs`, { playlist: tracklist, url: url });
   }
 

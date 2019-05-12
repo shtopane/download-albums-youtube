@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SliceDownloadAlbumService } from 'src/app/shared/services/slice-download-album.service';
+import { PlaylistService } from 'src/app/shared/services/playlist.service';
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
@@ -13,7 +13,7 @@ export class AlbumComponent implements OnInit {
   public tracklist$: Observable<Tracklist>;
 
   constructor(
-    private sliceDownloadAlbumService: SliceDownloadAlbumService
+    private sliceDownloadAlbumService: PlaylistService
   ) { }
 
   ngOnInit() {
