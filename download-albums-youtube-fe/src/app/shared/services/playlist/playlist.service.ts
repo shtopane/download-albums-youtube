@@ -23,7 +23,6 @@ export class PlaylistService {
   }
 
   public setTracklist(tracklist: Tracklist): void {
-    console.log('tracklist in service', tracklist);
     if (tracklist.albumName && tracklist.playlist) {
       this.tracklist = tracklist;
     }

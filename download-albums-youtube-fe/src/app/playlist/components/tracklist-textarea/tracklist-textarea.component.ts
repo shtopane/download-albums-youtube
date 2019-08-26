@@ -14,7 +14,6 @@ export class TracklistTextareaComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log('parent', this.parent)
   }
 
 }

@@ -43,14 +43,11 @@ export class PlaylistFormComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    console.log('submitted!', this.downloadAlbumForm);
-
     if (this.downloadAlbumForm.valid) {
       this.loaderService.showLoader();
       /** Do something */
       this.playlistService.sendPlaylist(this.url, this.tracklist).subscribe((res: BaseResponse) => {
         this.loaderService.hideLoader();
-        console.log('response from server', res)
         if (res.success) {
           this.playlistService.getPlaylist()
             .subscribe((res: Tracklist & BaseResponse) => {

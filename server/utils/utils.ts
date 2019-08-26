@@ -11,19 +11,35 @@ class Utils {
     private unknownSongCounter = 0;
 
     public getSongsObjects(playlist: string): Playlist[] {
+        // let copy = `[00:00:00] 01. Theme From The Iron Horse
+        // [00:04:32] 02. Angels
+        // [00:09:35] 03. Johnny Law
+        // [00:12:01] 04. Poppin' Wheelies
+        // [00:14:01] 05. War
+        // [00:18:27] 06. Oh My
+        // [00:19:51] 07. You're Mine
+        // [00:21:25] 08. Take Out
+        // [00:26:10] 09. Dreaming About Dreams
+        // [00:27:25] 10. Da Da Da
+        // [00:29:16] 11. The Fuzz
+        // [00:33:12] 12. Jean Jacket John
+        // [00:34:24] 13. Ain't Right
+        // [00:37:52] 14. Plan B
+        // [00:39:44] 15. Peace`;
         if (!playlist || playlist === null) {
             throw new Error('No playlist!');
         }
+
         const minimumAcceptedSongsComputed = 3;
         let numberOfSongsInPlaylist = this.getLengthOfTracklist(playlist);
-        let computedPlaylist: string[];
+        let computedPlaylist: string[] = [];
         let songObjects: Playlist[] = [];
 
         /** replace closing bracket with empty string(if any) */
         // playlist = playlist.replace(regexConstants.bracketRegExp, '');
 
-        /** TODO: Wrong logic! We spit it one way and if it is not efficient, we try the others. */
-        computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+        // /** TODO: Wrong logic! We spit it one way and if it is not efficient, we try the others. */
+        // computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
         console.log('computed first time', computedPlaylist);
         if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
             computedPlaylist = playlist.split(regexConstants.newLinesRegExp);
@@ -40,10 +56,9 @@ class Utils {
 
         for (let replacedString of computedPlaylist) {
             if (replacedString.trim()) {
-                console.log(chalk.bold('replaced string not trimmed', replacedString));
                 fullSongName = replacedString.trim();
                 songObject = this.cutStringToTimeOnly(fullSongName);
-
+                console.log(songObject);
                 if (songObject && Object.keys(songObject).length > 0) {
                     songObjects.push(songObject)
                 }
@@ -141,7 +156,7 @@ class Utils {
         if (!str || str === null) {
             throw new Error('No input string provided!');
         }
-
+        str = str.trim();
         let result: Playlist = {
             songBegin: undefined,
             songName: undefined
@@ -156,9 +171,8 @@ class Utils {
         }
 
         let matchedSongName = str.match(regexConstants.trackNameRegExp);
-        console.log(chalk.bgBlack('original string', str));
-
         if (matchedSongName === null) {
+            console.log('str', str)
             result.songName = `UnknownSong${++this.unknownSongCounter}`;
             return result;
         } else {

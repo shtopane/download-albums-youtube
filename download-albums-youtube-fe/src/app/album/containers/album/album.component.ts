@@ -3,6 +3,7 @@ import { PlaylistService } from 'src/app/shared/services/playlist/playlist.servi
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { SongInfo } from '../../components/tracklist-item/tracklist-item.component';
 
 @Component({
   selector: 'app-album',
@@ -17,36 +18,17 @@ export class AlbumComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const t: Tracklist = {
-      playlist: [
-        {
-          "songBegin": "0:00",
-          "songName": "First part",
-          "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
-        },
-        {
-          "songBegin": "1:30",
-          "songName": "Second part",
-          "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
-        },
-        {
-          "songBegin": "2:15",
-          "songName": "Third part",
-          "tumbnail": "https://i.ytimg.com/vi/pQCfnMeEv3w/default.jpg"
-        }
-      ],
-      albumName: "The Underground Youth - Alice (Official Video)",
-    }
     this.tracklist$ = this.sliceDownloadAlbumService.getTracklist();
   }
 
-  public onDownloadClicked(albumName: string, songName: string): void {
-    const url = `${environment.serverUrl}/download?albumName=${albumName}&songName=${songName}`;
+  public onDownloadClicked(songInfo: SongInfo): void {
+    const url = `${environment.serverUrl}/download?albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
     window.open(url, '_blank');
   }
 
-  public onListenClicked(albumName: string, songName: string): void {
-    const url = `${environment.serverUrl}/listen?albumName=${albumName}&songName=${songName}`;
+  public onListenClicked(songInfo: SongInfo): void {
+    console.log('listen', songInfo.albumName, songInfo.songName);
+    const url = `${environment.serverUrl}/listen?albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
     window.open(url, '_blank');
   }
 
