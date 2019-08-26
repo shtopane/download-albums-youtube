@@ -42,16 +42,18 @@ export class AlbumController {
         if (videoInfo) {
             formats = videoInfo.formats;
             chosenFormat = <ytdl.videoFormat>ytdl.chooseFormat(formats, {});
-            this.fileTitle = videoInfo.title;
+            /** TODO: Make checks for undefined! */
+            this.fileTitle = videoInfo.title || videoInfo.player_response.videoDetails.title;
             /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
-            this.tumbnailUrl = videoInfo.thumbnail_url;
-            this.lengthInSeconds = videoInfo.length_seconds;
+            /** TODO: Make checks for undefined! */
+            this.tumbnailUrl = videoInfo.thumbnail_url || videoInfo.player_response.videoDetails.thumbnail[0].url;
+            /** TODO: Make checks for undefined! */
+            this.lengthInSeconds = videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
         } else {
             this.noVideoInfoErrorHandle();
         }
         console.log(chalk.yellow('length of video', this.lengthInSeconds))
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
-
         const rootOutDir = 'output';
         if (!fs.existsSync(rootOutDir)) {
             fs.mkdirSync(rootOutDir);
