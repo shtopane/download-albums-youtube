@@ -29,7 +29,7 @@ export class AlbumController {
     public async handleAlbumSlicing(req: express.Request, res: express.Response): Promise<void> {
         this.req = req;
         this.res = res;
-
+        console.log(this.req.body);
         this.playlist = this.req.body.playlist;
         this.url = this.req.body.url;
         this.playlistArr = utils.getSongsObjects(this.playlist);
@@ -46,7 +46,10 @@ export class AlbumController {
             this.fileTitle = videoInfo.title || videoInfo.player_response.videoDetails.title;
             /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
             /** TODO: Make checks for undefined! */
-            this.tumbnailUrl = videoInfo.thumbnail_url || videoInfo.player_response.videoDetails.thumbnail[0].url;
+            const tumbnail = videoInfo.player_response.videoDetails.thumbnail && videoInfo.player_response.videoDetails.thumbnail.thumbnails.length ?
+                videoInfo.player_response.videoDetails.thumbnail.thumbnails[0].url : undefined;
+
+            this.tumbnailUrl = videoInfo.thumbnail_url || tumbnail;
             /** TODO: Make checks for undefined! */
             this.lengthInSeconds = videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
         } else {
