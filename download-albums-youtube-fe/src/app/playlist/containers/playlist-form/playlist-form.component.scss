@@ -1,3 +1,9 @@
+:host {
+    display: block;
+    height: 100%;
+    overflow: hidden;
+}
+
 #loader {
     z-index: 5;
     width: 100%;
@@ -13,6 +19,35 @@
     bottom: 0;
     right: 0;
     position: absolute;
+}
+
+.display-on-desktop {
+    display: block;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 1rem;
+    background: #222;
+    color: #ccc;
+
+    span {
+        cursor: pointer;
+    }
+
+    h1 {
+        font-size: 2rem;
+        line-height: 2rem;
+        margin: 0;
+        color: #ccc;
+        margin: auto;
+    }
+}
+
+ul li {
+    text-align: left;
 }
 
 #input-wrap {
@@ -48,4 +83,15 @@ textarea:focus {
     vertical-align: middle;
     top: 50%;
     transform: translate(-50%, -50%);
+}
+
+@media only screen and (min-width:320px) and (max-width: 768px) and (orientation:portrait) {
+    header h1 {
+        font-size: 1.3rem;
+        line-height: 1.3;
+    }
+
+    .display-on-desktop {
+        display: none;
+    }
 }

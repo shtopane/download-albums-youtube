@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PlaylistService } from '../../../shared/services/playlist/playlist.service';
 import { BaseResponse } from 'src/app/shared/models/base-response';
@@ -6,14 +6,16 @@ import { Tracklist } from '../../models/tracklist';
 import { Router } from '@angular/router';
 import { AlertService } from 'src/app/shared/services/alert/alert.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
+import { fromEvent } from 'rxjs';
 
 @Component({
   selector: 'app-playlist-form',
   templateUrl: './playlist-form.component.html',
   styleUrls: ['./playlist-form.component.scss']
 })
-export class PlaylistFormComponent implements OnInit {
+export class PlaylistFormComponent implements OnInit, AfterViewInit {
   public downloadAlbumForm: FormGroup;
+  public textAreaRows: number = 15;
 
   constructor(
     private fb: FormBuilder,
@@ -42,6 +44,11 @@ export class PlaylistFormComponent implements OnInit {
     });
   }
 
+  public ngAfterViewInit(): void {
+    this.textAreaRows = window.document.body.clientWidth === 320 && window.document.body.clientWidth <= 768 ? 5 : 15;
+    console.log(this.textAreaRows)
+  }
+
   public onSubmit(): void {
     if (this.downloadAlbumForm.valid) {
       this.loaderService.showLoader();
@@ -64,6 +71,10 @@ export class PlaylistFormComponent implements OnInit {
           }
         );
     }
+  }
+
+  public openMenu(event) {
+    event.preventDefault();
   }
 
 }
