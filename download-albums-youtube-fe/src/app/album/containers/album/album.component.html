@@ -4,8 +4,9 @@
     <button class="uk-button uk-button-danger download-zip-btn"
       (click)="onDownloadZipClicked(tracklist?.albumName);">Download ZIP</button>
   </div>
-  <app-tracklist-item *ngFor="let track of tracklist?.playlist" [albumName]="tracklist?.albumName" [track]="track"
-    (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);"></app-tracklist-item>
+  <app-tracklist-item *ngFor="let track of playlist" [cssClasses]="isMobile ? 'uk-flex-column' : ''"
+    [albumName]="tracklist?.albumName" [track]="track" (listen)="onListenClicked($event);"
+    (download)="onDownloadClicked($event);"></app-tracklist-item>
   <!-- <div class="
   uk-box-shadow-hover-large
   uk-flex 

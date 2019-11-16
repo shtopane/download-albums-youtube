@@ -15,6 +15,7 @@ export type SongInfo = {
 export class TracklistItemComponent implements OnInit {
   @Input() albumName: string;
   @Input() track: TracklistItem;
+  @Input() cssClasses: string;
   @Output() download: EventEmitter<SongInfo> = new EventEmitter<SongInfo>();
   @Output() listen: EventEmitter<SongInfo> = new EventEmitter<SongInfo>();
 

@@ -1,14 +1,16 @@
 <div class="
+  tracklist-item
   uk-box-shadow-hover-large
-  uk-flex 
+  uk-flex
   uk-box-shadow-medium 
   uk-padding-small 
-  uk-margin 
   uk-flex-between 
   tracklist
-">
-  <img [src]="track.tumbnail" width="150" alt="">
-  <div class="uk-padding song-info-wrap">
+" [ngClass]="cssClasses">
+  <div class="img-container">
+    <img [src]="track.tumbnail" width="150" alt="">
+  </div>
+  <div class="song-info-wrap">
     <span class="song-info">{{track.songName}} - {{track.songBegin}}</span>
   </div>
   <div class="uk-margin-auto-top">

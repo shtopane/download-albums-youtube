@@ -1,24 +1,56 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { Tracklist } from 'src/app/playlist/models/tracklist';
-import { Observable, of } from 'rxjs';
+import { Observable, of, fromEvent, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SongInfo } from '../../components/tracklist-item/tracklist-item.component';
+import { TracklistItem } from 'src/app/playlist/models/tracklist-item';
+import { tap, takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-album',
   templateUrl: './album.component.html',
   styleUrls: ['./album.component.scss']
 })
-export class AlbumComponent implements OnInit {
+export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
   public tracklist$: Observable<Tracklist>;
+  public playlist: TracklistItem[];
+  public isMobile: boolean;
+
+  protected destroySubs = new Subject<boolean>();
 
   constructor(
     private sliceDownloadAlbumService: PlaylistService
   ) { }
 
   ngOnInit() {
+    fromEvent(window, 'resize').pipe(
+      tap(() => this.determineIsMobile()),
+      takeUntil(this.destroySubs)
+    ).subscribe();
+
+    this.playlist = [
+      {
+        songBegin: '00:00',
+        songName: 'Alice',
+        tumbnail: 'https://i.ytimg.com/vi/pQCfnMeEv3w/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBMqbZhO0OtGS_DzEzHewxh-poJaA',
+      },
+      {
+        songBegin: '01:00',
+        songName: 'Dragancho',
+        tumbnail: 'https://i.ytimg.com/vi/pQCfnMeEv3w/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBMqbZhO0OtGS_DzEzHewxh-poJaA',
+      },
+    ]
     this.tracklist$ = this.sliceDownloadAlbumService.getTracklist();
+  }
+
+  ngAfterViewInit(): void {
+    this.determineIsMobile();
+  }
+
+  ngOnDestroy(): void {
+    this.destroySubs.next(true);
+    this.destroySubs.complete();
   }
 
   public onDownloadClicked(songInfo: SongInfo): void {
@@ -35,6 +67,11 @@ export class AlbumComponent implements OnInit {
   public onDownloadZipClicked(albumName: string): void {
     const url = `${environment.serverUrl}/downloadZip?isPlaylist=false&albumName=${albumName}`;
     window.open(url, '_blank');
+  }
+
+  protected determineIsMobile(): void {
+    console.log('heree');
+    this.isMobile = window.document.body.clientWidth <= 640 ? true : false;
   }
 
 }
