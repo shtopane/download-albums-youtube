@@ -1,8 +1,3 @@
-<header>
-  <a href="#side-menu" uk-icon="menu" (click)="openMenu($event)" uk-toggle></a>
-
-  <h1>Youtube Album Downloader</h1>
-</header>
 <form class="uk-height-1-1" [formGroup]="downloadAlbumForm">
   <app-url-input controlName="url" [parent]="downloadAlbumForm"
     placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q" [disabled]="disabled" (send)="onSubmit()">
@@ -11,14 +6,3 @@
   <app-tracklist-textarea class="uk-display-block uk-height-1-1" controlName="tracklist" [parent]="downloadAlbumForm">
   </app-tracklist-textarea>
 </form>
-
-<div id="side-menu" uk-offcanvas>
-  <div class="uk-offcanvas-bar">
-
-    <ul class="uk-nav uk-nav-default">
-      <li><a routerLinkActive="uk-active" routerLink="/playlist">Download and Slice Youtube Albums</a></li>
-      <li><a routerLinkActive="uk-active" routerLink="/download-playlist">Download Youtube Playlists</a></li>
-    </ul>
-
-  </div>
-</div>

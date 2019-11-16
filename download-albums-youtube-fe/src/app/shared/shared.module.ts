@@ -5,12 +5,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AlertComponent } from './components/alert/alert.component';
 import { LoaderComponent } from './components/loader/loader.component';
 import { UrlInputComponent } from './components/url-input/url-input.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
+import { RouterModule } from '@angular/router';
 
-const components = [AlertComponent, LoaderComponent, UrlInputComponent];
+const components = [AlertComponent, LoaderComponent, UrlInputComponent, NavigationComponent];
 @NgModule({
   declarations: [components],
   imports: [
     CommonModule,
+    RouterModule,
     ReactiveFormsModule
   ],
   exports: [components]

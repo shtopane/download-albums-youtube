@@ -14,6 +14,10 @@ export class PlaylistService {
 
   constructor(private http: HttpClient) { }
 
+  public downloadYotubePlaylist(url: string): Observable<any> {
+    return this.http.post(`${environment.serverUrl}/download-playlist`, { url });
+  }
+
   public sendPlaylist(url: string, tracklist: string): Observable<any> {
     return this.http.post(`${environment.serverUrl}/songs`, { playlist: tracklist, url: url });
   }
