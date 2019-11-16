@@ -11,6 +11,7 @@ export class UrlInputComponent implements OnInit {
   @Input() controlName: string;
   @Input() parent: FormGroup;
   @Input() disabled: boolean;
+  @Input() placeholder: string;
   @Output() send: EventEmitter<void> = new EventEmitter<void>();
 
   constructor() { }

@@ -76,10 +76,12 @@ export class AlbumController {
         }
         console.log(chalk.yellow('length of video', this.lengthInSeconds))
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
+
         const rootOutDir = 'output';
         if (!fs.existsSync(rootOutDir)) {
             fs.mkdirSync(rootOutDir);
         }
+
         this.videoYoutubePath = `${rootOutDir}/${this.fileTitle}.avi`;
 
         /** Calculate duration for the first song. Calculate here so that if the tracklist in invalid

@@ -4,7 +4,8 @@
   <h1>Youtube Album Downloader</h1>
 </header>
 <form class="uk-height-1-1" [formGroup]="downloadAlbumForm">
-  <app-url-input controlName="url" [parent]="downloadAlbumForm" [disabled]="disabled" (send)="onSubmit()">
+  <app-url-input controlName="url" [parent]="downloadAlbumForm"
+    placeholder="Video URL e.g. https://www.youtube.com/watch?v=MtN1YnoL46Q" [disabled]="disabled" (send)="onSubmit()">
   </app-url-input>
   <app-how-to-use class="display-on-desktop"></app-how-to-use>
   <app-tracklist-textarea class="uk-display-block uk-height-1-1" controlName="tracklist" [parent]="downloadAlbumForm">
