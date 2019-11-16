@@ -1,3 +1,4 @@
-<p>
-  download-playlist works!
-</p>
+<form [formGroup]="downloadPlaylistForm" (submit)="onSubmit($event)">
+  <input formControlName="url" type="text" placeholder="Put a Youtube playlist or channel url">
+  <button type="submit">Send</button>
+</form>
