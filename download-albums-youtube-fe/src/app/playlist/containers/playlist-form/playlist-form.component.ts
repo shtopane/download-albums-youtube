@@ -46,19 +46,23 @@ export class PlaylistFormComponent implements OnInit {
     if (this.downloadAlbumForm.valid) {
       this.loaderService.showLoader();
       /** Do something */
-      this.playlistService.sendPlaylist(this.url, this.tracklist).subscribe((res: BaseResponse) => {
-        this.loaderService.hideLoader();
-        if (res.success) {
-          this.playlistService.getPlaylist()
-            .subscribe((res: Tracklist & BaseResponse) => {
-              this.playlistService.setTracklist({ albumName: res.albumName, playlist: res.playlist });
-              console.log('playlist?', res)
-              this.router.navigate(['/album']);
-            });
-        } else {
-          this.alertService.setMessage(res.errorMessage);
-        }
-      });
+      this.playlistService.sendPlaylist(this.url, this.tracklist)
+        .subscribe((res: BaseResponse) => {
+          this.loaderService.hideLoader();
+          if (res.success) {
+            this.playlistService.getPlaylist()
+              .subscribe((res: Tracklist & BaseResponse) => {
+                this.playlistService.setTracklist({ albumName: res.albumName, playlist: res.playlist });
+                this.router.navigate(['/album']);
+              });
+          }
+        },
+          (error) => {
+            console.log('in error clause of observable', error)
+            this.alertService.setMessage(error.error.errorMessage);
+            this.loaderService.hideLoader();
+          }
+        );
     }
   }
 

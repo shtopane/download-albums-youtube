@@ -32,11 +32,30 @@ export class AlbumController {
         console.log(this.req.body);
         this.playlist = this.req.body.playlist;
         this.url = this.req.body.url;
+
         this.playlistArr = utils.getSongsObjects(this.playlist);
+
+        if (!ytdl.validateURL(this.url)) {
+            this.res.status(400).send({
+                errorMessage: `The url you provided seems invalid. You gave ${this.url}`,
+                success: false
+            });
+            return;
+        } else if (this.playlistArr.length < 2) {
+            this.res.status(400).send({
+                errorMessage: `The minimum required songs in the playlist is 2. You gave ${this.playlistArr.length}`,
+                success: false
+            });
+            return;
+        }
+
         console.log('playlist ready!', this.playlistArr);
+
+
 
         let formats: ytdl.videoFormat[];
         let chosenFormat: ytdl.videoFormat | string;
+
         const videoInfo: ytdl.videoInfo = await ytdl.getInfo(this.url);
 
         if (videoInfo) {
@@ -98,8 +117,6 @@ export class AlbumController {
             track.tumbnail = this.tumbnailUrl;
         }
 
-        console.log(this.playlistArr);
-        console.log(this.fileTitle);
         const response: PlaylistResponse = {
             playlist: this.playlistArr.slice(),
             albumName: this.fileTitle,
@@ -107,7 +124,6 @@ export class AlbumController {
         };
 
         res.status(200).json(response);
-        res.end();
     }
 
     private storeFile(seekTime: string, duration: number, outputFileName: string): void {
@@ -119,6 +135,7 @@ export class AlbumController {
 
         let audioFileName = `${outPutDir}/${outputFileName}.mp3`;
         let stream: fs.WriteStream = fs.createWriteStream(audioFileName);
+
         console.log(
             chalk.yellowBright(`
             Seektime : ${seekTime}, 
@@ -137,7 +154,6 @@ export class AlbumController {
             })
             .on('stderr', (line: string) => {
                 if (line.indexOf('size=') > -1) {
-
                     console.log(`command line: ${line}`);
                 }
             })
@@ -156,12 +172,9 @@ export class AlbumController {
         /** if we reached the end of the tracklist or the tracklist is 2 of length(1 song out of the whole album?
          *  Remove if this is not logical at all.) 
          */
-        console.log(chalk.gray(`counter: ${this.counter}`));
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
-            console.log(chalk.green('NO MORE SONGS!'));
             this.counter = 0;
             this.res.status(200).json({ success: true });
-            this.res.end();
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {
@@ -196,7 +209,6 @@ export class AlbumController {
                 errorMessage: 'Invalid tracklist! For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss.',
                 success: false
             } as BaseResponse);
-        this.res.end();
     }
 
     private generateNextDuration(lengthInSeconds: string): { nextDuration: number; songBegin: string } {
