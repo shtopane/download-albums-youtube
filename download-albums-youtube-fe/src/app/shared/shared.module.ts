@@ -7,8 +7,9 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { UrlInputComponent } from './components/url-input/url-input.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RouterModule } from '@angular/router';
+import { TracklistItemComponent } from './components/tracklist-item/tracklist-item.component';
 
-const components = [AlertComponent, LoaderComponent, UrlInputComponent, NavigationComponent];
+const components = [AlertComponent, LoaderComponent, UrlInputComponent, NavigationComponent, TracklistItemComponent];
 @NgModule({
   declarations: [components],
   imports: [

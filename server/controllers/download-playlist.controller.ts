@@ -100,10 +100,18 @@ export class DownloadPlaylistController {
                     console.log('finished');
                     const sliceIndex = songPath.lastIndexOf('/');
                     const playlistDownloadPath = songPath.slice(0, sliceIndex);
+                    const tracklistData = this.youtubePlaylistData.map(item => {
+                        return {
+                            songBegin: item.duration,
+                            songName: item.title,
+                            thumbnail: item.thumbnail
+                        }
+                    });
 
                     this.res.status(200).send({
                         success: true,
-                        playlist: this.youtubePlaylistData.slice(),
+                        title: this.playlistTitle,
+                        playlist: tracklistData,
                         playlistDownloadPath: playlistDownloadPath
                     });
                     return;

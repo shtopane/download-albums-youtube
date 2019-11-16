@@ -3,7 +3,7 @@ import { PlaylistService } from 'src/app/shared/services/playlist/playlist.servi
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of, fromEvent, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { SongInfo } from '../../components/tracklist-item/tracklist-item.component';
+import { SongInfo } from '../../../shared/components/tracklist-item/tracklist-item.component';
 import { TracklistItem } from 'src/app/playlist/models/tracklist-item';
 import { tap, takeUntil } from 'rxjs/operators';
 
@@ -29,18 +29,6 @@ export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.destroySubs)
     ).subscribe();
 
-    this.playlist = [
-      {
-        songBegin: '00:00',
-        songName: 'Alice',
-        tumbnail: 'https://i.ytimg.com/vi/pQCfnMeEv3w/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBMqbZhO0OtGS_DzEzHewxh-poJaA',
-      },
-      {
-        songBegin: '01:00',
-        songName: 'Dragancho',
-        tumbnail: 'https://i.ytimg.com/vi/pQCfnMeEv3w/hqdefault.jpg?sqp=-oaymwEiCKgBEF5IWvKriqkDFQgBFQAAAAAYASUAAMhCPQCAokN4AQ==&rs=AOn4CLBMqbZhO0OtGS_DzEzHewxh-poJaA',
-      },
-    ]
     this.tracklist$ = this.sliceDownloadAlbumService.getTracklist();
   }
 
@@ -70,7 +58,6 @@ export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   protected determineIsMobile(): void {
-    console.log('heree');
     this.isMobile = window.document.body.clientWidth <= 640 ? true : false;
   }
 
