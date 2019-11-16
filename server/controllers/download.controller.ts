@@ -8,13 +8,16 @@ export class DownloadController {
     public handleDownloadSong(req: express.Request, res: express.Response) {
         const albumName = req.query.albumName;
         const songName = req.query.songName;
+        const isDownloadingPlaylist = req.query.isPlaylist;
+
         console.log(albumName);
         console.log(songName);
         console.log(`output/${albumName}/${songName}.mp3`);
-        const folder = `output/${albumName}/${songName}.mp3`;
+        const rootFolder = isDownloadingPlaylist ? 'playlistsOutput' : 'output';
+        const folder = `${rootFolder}/${albumName}/${songName}.mp3`;
         const file = `${songName}.mp3`;
         // res.attachment(`output/${albumName}/${songName}.mp3`);
-        res.header(`Content-Disposition', 'attachment; filename=output/${albumName}/${songName}.mp3`);
+        res.header(`Content-Disposition', 'attachment; filename=${rootFolder}/${albumName}/${songName}.mp3`);
         res.download(folder, file, (err) => {
             if (!err) {
                 console.log('competed!');
@@ -29,9 +32,11 @@ export class DownloadController {
     public handleListenSong(req: express.Request, res: express.Response, next: express.NextFunction) {
         const albumName = req.query.albumName;
         const songName = req.query.songName;
+        const isDownloadingPlaylist = req.query.isPlaylist;
+        const rootFolder = isDownloadingPlaylist ? 'playlistsOutput' : 'output';
 
         const options = {
-            root: `output/${albumName}`
+            root: `${rootFolder}/${albumName}`
         };
 
         res.sendFile(`${songName}.mp3`, options, function (err) {
@@ -45,7 +50,10 @@ export class DownloadController {
 
     public hanldeDownloadZip(req: express.Request, res: express.Response, next: express.NextFunction) {
         const albumName = req.query.albumName;
-        const zipDir = `output/zips`;
+        const isDownloadingPlaylist = req.query.isPlaylist;
+        const rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
+        const zipDir = `${rootFolder}/zips`;
+
         const zip = archiver('zip', {
             zlib: { level: 9 } // Sets the compression level.
         });
@@ -95,7 +103,7 @@ export class DownloadController {
         // pipe archive data to the file
         zip.pipe(albumZiped);
         // append files from a sub-directory and naming it with the album name within the archive
-        zip.directory(`output/${albumName}`, `${albumName}`);
+        zip.directory(`${rootFolder}/${albumName}`, `${albumName}`);
         // finalize the archive (ie we are done appending files but streams have to finish yet)
         // 'close', 'end' or 'finish' may be fired right after calling this method so register to them beforehand
         zip.finalize();

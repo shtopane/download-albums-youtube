@@ -1,4 +1,4 @@
-<form [formGroup]="downloadPlaylistForm" (submit)="onSubmit($event)">
+<form [formGroup]="downloadPlaylistForm">
   <app-url-input controlName="url" [parent]="downloadPlaylistForm" placeholder="Put a Youtube playlist or channel url"
     (send)="onSubmit();"></app-url-input>
 </form>

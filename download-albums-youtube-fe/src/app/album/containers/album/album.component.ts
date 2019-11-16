@@ -22,18 +22,18 @@ export class AlbumComponent implements OnInit {
   }
 
   public onDownloadClicked(songInfo: SongInfo): void {
-    const url = `${environment.serverUrl}/download?albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
+    const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
     window.open(url, '_blank');
   }
 
   public onListenClicked(songInfo: SongInfo): void {
     console.log('listen', songInfo.albumName, songInfo.songName);
-    const url = `${environment.serverUrl}/listen?albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
+    const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
     window.open(url, '_blank');
   }
 
   public onDownloadZipClicked(albumName: string): void {
-    const url = `${environment.serverUrl}/downloadZip?albumName=${albumName}`;
+    const url = `${environment.serverUrl}/downloadZip?isPlaylist=false&albumName=${albumName}`;
     window.open(url, '_blank');
   }
 

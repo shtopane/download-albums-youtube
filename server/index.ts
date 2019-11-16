@@ -13,7 +13,7 @@ const downloadPlaylistController = new DownloadPlaylistController();
 app.post('/songs', albumController.handleAlbumSlicing.bind(albumController));
 app.get('/playlist', albumController.handlePlaylist.bind(albumController));
 
-app.get('/download-playlist', downloadPlaylistController.handleDownloadPlaylistFromYoutube.bind(downloadPlaylistController));
+app.post('/download-playlist', downloadPlaylistController.handleDownloadPlaylistFromYoutube.bind(downloadPlaylistController));
 
 
 app.get('/download', downloadController.handleDownloadSong.bind(downloadController));

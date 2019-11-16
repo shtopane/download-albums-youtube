@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
+import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 
 @Component({
   selector: 'app-download-playlist',
@@ -13,7 +14,8 @@ export class DownloadPlaylistComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private playlistService: PlaylistService
+    private playlistService: PlaylistService,
+    private loaderService: LoaderService
   ) { }
 
   public get url() {
@@ -26,9 +28,21 @@ export class DownloadPlaylistComponent implements OnInit {
     })
   }
 
-  public onSubmit(event) {
-    event.preventDefault();
-    this.playlistService.downloadYotubePlaylist(this.url.value);
+  public onSubmit() {
+    if (this.downloadPlaylistForm.valid) {
+      this.loaderService.showLoader();
+
+      this.playlistService.downloadYotubePlaylist(this.url.value).subscribe(res => {
+        this.loaderService.hideLoader();
+        console.log('res from server', res)
+      },
+        error => {
+          this.loaderService.hideLoader();
+          console.log('download playlist submit error', error);
+        }
+      );
+    }
+
   }
 
 }

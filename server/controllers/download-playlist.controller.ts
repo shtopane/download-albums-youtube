@@ -2,48 +2,153 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as ytpl from 'ytpl';
 import * as ytdl from 'ytdl-core';
-import { AlbumController } from './album.controller';
+import * as ffmpeg from 'fluent-ffmpeg';
 import chalk from 'chalk';
 
+type YoutubePlaylistItem = {
+    author?: {
+        id?: string;
+        name?: string;
+        user?: string;
+        user_url?: string;
+        channel_url?: string;
+    };
+    title?: string;
+    url?: string;
+    url_simple?: string;
+    duration?: string;
+    id?: string;
+    thumbnail?: string;
+}
+
 export class DownloadPlaylistController {
+    protected res: express.Response;
+    protected req: express.Request;
     protected counter = 0;
+    protected playlistTitle: string;
+    protected youtubePlaylistData: YoutubePlaylistItem[];
+    protected rootDir = 'playlistsOutput';
+
+    constructor() {
+        if (!fs.existsSync(this.rootDir)) {
+            fs.mkdirSync(this.rootDir);
+        }
+    }
 
     public async handleDownloadPlaylistFromYoutube(req: express.Request, res: express.Response) {
-        const result: ytpl.result = await ytpl('https://www.youtube.com/playlist?list=OLAK5uy_l9DKK1vNaReJBc4tDpJdYZvUTyy29zk2E');
+        this.res = res;
+        this.req = req;
 
-        console.log('HANDLE')
-        console.log(result);
-        const urls = result.items.map(item => item.url);
-        const ids = result.items.map(item => {
-            return `https://www.youtube.com/watch?v=${item.id}`;
-        });
+        const { url } = this.req.body;
+        let result: ytpl.result;
 
-        const rootOutDir = 'playlistsOutput';
-        if (!fs.existsSync(rootOutDir)) {
-            fs.mkdirSync(rootOutDir);
+        try {
+            result = await ytpl(url);
+        } catch (err) {
+            res.status(500).send({
+                errorMessage: err,
+                success: false
+            });
+            return;
         }
 
-        const videoYoutubePath = `${rootOutDir}/song.mp3`;
-        console.log('URLS', urls)
-        if (result.items.length > 0) {
+        console.log(result);
+        this.youtubePlaylistData = result.items;
 
+        if (result.total_items > 0) {
+            const firstSongTitle = result.items[0].title;
+            const firstSongUrl = result.items[0].url_simple;
+            let generateNextSongPath: (s: string) => string;
 
-            this.download(urls[this.counter]);
+            if (result.title) {
+                this.playlistTitle = result.title;
+                const folder = `${result.title}`;
 
+                generateNextSongPath = this.generateSongPath(firstSongTitle, folder);
+
+            } else {
+                generateNextSongPath = this.generateSongPath(firstSongTitle);
+            }
+
+            this.download(firstSongUrl, generateNextSongPath(firstSongTitle), generateNextSongPath);
+
+        } else {
+            res.status(400).send({ errorMessage: 'There are no videos for this playlist!', success: false });
+            return;
         }
 
     }
 
-    protected download(url) {
+    protected download(url: string, songPath: string, funcToGenerateNextSongPath): void {
+        console.log('hereeee');
+        let stream = ytdl(url);
+
+        ffmpeg(stream)
+            .toFormat('mp3')
+            .audioBitrate(128)
+            .save(songPath)
+            .on('end', () => {
+                console.log(chalk.yellow('song downloaded!', url, songPath));
+                this.counter++;
+
+                if (this.youtubePlaylistData[this.counter]) {
+                    let nextUrl = this.youtubePlaylistData[this.counter].url_simple;
+                    let nextSongPath = funcToGenerateNextSongPath(this.youtubePlaylistData[this.counter].title);
+
+                    this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
+                } else {
+                    console.log('finished');
+                    const sliceIndex = songPath.lastIndexOf('/');
+                    const playlistDownloadPath = songPath.slice(0, sliceIndex);
+
+                    this.res.status(200).send({
+                        success: true,
+                        playlist: this.youtubePlaylistData.slice(),
+                        playlistDownloadPath: playlistDownloadPath
+                    });
+                    return;
+                }
+            })
+            .on('stderr', (line: string) => {
+                if (line.indexOf('size=') > -1) {
+                    console.log(`command line: ${line}`);
+                }
+            })
+            .on('error', (err) => {
+                console.log('ERROR ', err);
+            })
         // ytdl(url)
-        //     .pipe(fs.createWriteStream(videoYoutubePath))
+        //     .pipe(fs.createWriteStream(songPath))
         //     .on('finish', () => {
-        //         console.log(chalk.yellow('album downloaded!'));
+        //         console.log(chalk.yellow('song downloaded!', url, songPath));
         //         this.counter++;
-        //         if (ids[this.counter]) {
-        //             download(ids[this.counter]);
+
+        //         if (this.youtubePlaylistData[this.counter]) {
+        //             let nextUrl = this.youtubePlaylistData[this.counter].url_simple;
+        //             let nextSongPath = funcToGenerateNextSongPath(this.youtubePlaylistData[this.counter].title);
+
+        //             this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
+        //         } else {
+        //             console.log('finished');
+        //             this.res.status(200).send({
+        //                 success: true
+        //             });
+        //             return;
         //         }
-        //         // this.storeFile(this.playlistArr[0].songBegin, this.duration, this.playlistArr[0].songName);
+
         //     });
+
+    }
+    protected generateSongPath(songName: string, folder?: string): (songName: string) => string {
+        return (songName) => {
+            const folderName = folder;
+
+            if (folderName && !fs.existsSync(`${this.rootDir}/${folderName}`)) {
+                fs.mkdirSync(`${this.rootDir}/${folderName}`);
+            }
+
+            return folderName ? `${this.rootDir}/${folderName}/${songName}.mp3` : `${this.rootDir}/${songName}.mp3`;
+        };
+
     }
 }
