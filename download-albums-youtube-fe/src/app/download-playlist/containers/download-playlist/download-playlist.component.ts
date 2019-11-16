@@ -10,8 +10,7 @@ import { SongInfo } from 'src/app/shared/components/tracklist-item/tracklist-ite
 type DownloadPlaylistResponse = {
   success?: boolean;
   title?: string;
-  playlist?: TracklistItem[]
-  playlistDownloadPath: string;
+  playlist?: TracklistItem[];
 }
 @Component({
   selector: 'app-download-playlist',
@@ -44,8 +43,6 @@ export class DownloadPlaylistComponent implements OnInit {
 
       this.playlistService.downloadYotubePlaylist(this.url.value).subscribe((res: DownloadPlaylistResponse) => {
         this.loaderService.hideLoader();
-        console.log('res from server', res)
-
         this.tracklistData = res;
       },
         error => {
