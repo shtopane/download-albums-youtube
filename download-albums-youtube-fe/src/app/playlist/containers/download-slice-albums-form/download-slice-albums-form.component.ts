@@ -9,11 +9,11 @@ import { AlertService } from 'src/app/shared/services/alert/alert.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 
 @Component({
-  selector: 'app-playlist-form',
-  templateUrl: './playlist-form.component.html',
-  styleUrls: ['./playlist-form.component.scss']
+  selector: 'app-download-slice-albums-form',
+  templateUrl: './download-slice-albums-form.component.html',
+  styleUrls: ['./download-slice-albums-form.component.scss']
 })
-export class PlaylistFormComponent implements OnInit {
+export class DownloadSliceAlbumsFormComponent implements OnInit {
   public downloadAlbumForm: FormGroup;
 
   constructor(
