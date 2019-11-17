@@ -51,8 +51,6 @@ export class AlbumController {
 
         console.log('playlist ready!', this.playlistArr);
 
-
-
         let formats: ytdl.videoFormat[];
         let chosenFormat: ytdl.videoFormat | string;
 
@@ -74,6 +72,7 @@ export class AlbumController {
         } else {
             this.noVideoInfoErrorHandle();
         }
+
         console.log(chalk.yellow('length of video', this.lengthInSeconds))
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
 
@@ -109,7 +108,6 @@ export class AlbumController {
                 });
         } catch (error) {
             res.status(500).send({ errorMessage: error, success: false });
-            res.end();
         }
 
     }
@@ -126,6 +124,7 @@ export class AlbumController {
         };
 
         res.status(200).json(response);
+        return;
     }
 
     private storeFile(seekTime: string, duration: number, outputFileName: string): void {
@@ -150,6 +149,7 @@ export class AlbumController {
             /** currentSeekTime */
             .seekInput(seekTime)
             .toFormat('mp3')
+            .audioBitrate(160)
             .duration(duration)
             .on('end', () => {
                 this.onEnd();
@@ -176,7 +176,10 @@ export class AlbumController {
          */
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
             this.counter = 0;
+
             this.res.status(200).json({ success: true });
+            console.log(chalk.green('finished!'));
+            return;
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {
