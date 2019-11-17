@@ -5,6 +5,8 @@ import * as ytdl from 'ytdl-core';
 import * as ffmpeg from 'fluent-ffmpeg';
 import chalk from 'chalk';
 
+import { PlaylistResponse, PlaylistItem } from 'sharedModels/common';
+
 type YoutubePlaylistItem = {
     author?: {
         id?: string;
@@ -60,6 +62,7 @@ export class DownloadPlaylistController {
         if (result.total_items > 0) {
             const firstSongTitle = result.items[0].title;
             const firstSongUrl = result.items[0].url_simple;
+
             let generateNextSongPath: (s: string) => string;
 
             if (result.title) {
@@ -101,19 +104,21 @@ export class DownloadPlaylistController {
                 } else {
                     console.log(chalk.green(`Finished! It took: ${(Date.now() - this.startTime) / 1000}s`));
 
-                    const tracklistData = this.youtubePlaylistData.map(item => {
+                    const playlistArr: PlaylistItem[] = this.youtubePlaylistData.map(item => {
                         return {
-                            songBegin: item.duration,
-                            songName: item.title,
+                            startTime: item.duration,
+                            name: item.title,
                             thumbnail: item.thumbnail
-                        }
+                        } as PlaylistItem;
                     });
 
-                    this.res.status(200).send({
+                    const playlistResponse: PlaylistResponse = {
                         success: true,
                         albumName: this.playlistTitle,
-                        playlist: tracklistData
-                    });
+                        playlist: playlistArr
+                    };
+
+                    this.res.status(200).send(playlistResponse);
                     return;
                 }
             })
@@ -128,6 +133,7 @@ export class DownloadPlaylistController {
             .writeToStream(outStream, { end: true });
 
     }
+
     protected generateSongPath(songName: string, folder?: string): (songName: string) => string {
         return (songName) => {
             const folderName = folder;

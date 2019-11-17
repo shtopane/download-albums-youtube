@@ -5,11 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DownloadSliceAlbumsRoutingModule } from './download-slice-albums-routing.module';
 import { DownloadSliceAlbumsFormComponent } from './containers/download-slice-albums-form/download-slice-albums-form.component';
 import { HowToUseComponent } from './components/how-to-use/how-to-use.component';
-import { TracklistTextareaComponent } from './components/tracklist-textarea/tracklist-textarea.component';
+import { PlaylistTextareaComponent } from './components/playlist-textarea/playlist-textarea.component';
 import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
-  declarations: [DownloadSliceAlbumsFormComponent, HowToUseComponent, TracklistTextareaComponent],
+  declarations: [DownloadSliceAlbumsFormComponent, HowToUseComponent, PlaylistTextareaComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,

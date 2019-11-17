@@ -3,14 +3,15 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 
+import { Playlist } from 'sharedModels/common';
+
 import { environment } from 'src/environments/environment';
-import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlaylistService {
-  private tracklist: Tracklist;
+  private playlist: Playlist;
 
   constructor(private http: HttpClient) { }
 
@@ -18,25 +19,25 @@ export class PlaylistService {
     return this.http.post(`${environment.serverUrl}/download-playlist`, { url });
   }
 
-  public sendPlaylist(url: string, tracklist: string): Observable<any> {
-    return this.http.post(`${environment.serverUrl}/songs`, { playlist: tracklist, url: url });
+  public sendPlaylist(url: string, playlist: string): Observable<any> {
+    return this.http.post(`${environment.serverUrl}/songs`, { playlist: playlist, url: url });
   }
 
-  public getPlaylist(): Observable<Tracklist> {
-    return this.http.get<Tracklist>(`${environment.serverUrl}/playlist`);
+  public getPlaylist(): Observable<Playlist> {
+    return this.http.get<Playlist>(`${environment.serverUrl}/playlist`);
   }
 
-  public setTracklist(tracklist: Tracklist): void {
-    if (tracklist.albumName && tracklist.playlist) {
-      this.tracklist = tracklist;
+  public setLocalPlaylist(playlist: Playlist): void {
+    if (playlist.albumName && playlist.playlist) {
+      this.playlist = playlist;
     }
   }
 
-  public getTracklist(): Observable<Tracklist> {
-    const localTracklist = JSON.parse(localStorage.getItem('playlist'));
-    if (!this.tracklist) {
-      this.tracklist = localTracklist;
+  public getLocalPlaylist(): Observable<Playlist> {
+    const localPlaylist = JSON.parse(localStorage.getItem('playlist'));
+    if (!this.playlist) {
+      this.playlist = localPlaylist;
     }
-    return of({ ...this.tracklist });
+    return of({ ...this.playlist });
   }
 }

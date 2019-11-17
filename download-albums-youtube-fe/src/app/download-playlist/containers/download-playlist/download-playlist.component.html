@@ -2,6 +2,6 @@
   <app-url-input controlName="url" [parent]="downloadPlaylistForm" placeholder="Put a Youtube playlist or channel url"
     (send)="onSubmit();"></app-url-input>
 </form>
-<app-list-playlist [tracklist]="tracklistData" (listen)="onListenClicked($event);"
-  (download)="onDownloadClicked($event);" (downloadZip)="onDownloadZipClicked($event);">
+<app-list-playlist [playlist]="playlist" (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);"
+  (downloadZip)="onDownloadZipClicked($event);">
 </app-list-playlist>

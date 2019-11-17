@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { PlaylistService } from '../../../shared/services/playlist/playlist.service';
-import { BaseResponse } from 'src/app/shared/models/base-response';
-import { Tracklist } from '../../models/tracklist';
+import { PlaylistResponse, BaseResponse } from 'sharedModels/common';
+
+import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { AlertService } from 'src/app/shared/services/alert/alert.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 
@@ -28,8 +28,8 @@ export class DownloadSliceAlbumsFormComponent implements OnInit {
     return this.downloadAlbumForm.get('url').value;
   }
 
-  public get tracklist(): string {
-    return this.downloadAlbumForm.get('tracklist').value;
+  public get playlist(): string {
+    return this.downloadAlbumForm.get('playlist').value;
   }
 
   public get disabled(): boolean {
@@ -39,7 +39,7 @@ export class DownloadSliceAlbumsFormComponent implements OnInit {
   public ngOnInit(): void {
     this.downloadAlbumForm = this.fb.group({
       url: ['', Validators.required],
-      tracklist: [``, Validators.required]
+      playlist: [``, Validators.required]
     });
   }
 
@@ -47,13 +47,13 @@ export class DownloadSliceAlbumsFormComponent implements OnInit {
     if (this.downloadAlbumForm.valid) {
       this.loaderService.showLoader();
       /** Do something */
-      this.playlistService.sendPlaylist(this.url, this.tracklist)
+      this.playlistService.sendPlaylist(this.url, this.playlist)
         .subscribe((res: BaseResponse) => {
           this.loaderService.hideLoader();
           if (res.success) {
             this.playlistService.getPlaylist()
-              .subscribe((res: Tracklist & BaseResponse) => {
-                this.playlistService.setTracklist({ albumName: res.albumName, playlist: res.playlist });
+              .subscribe((res: PlaylistResponse) => {
+                this.playlistService.setLocalPlaylist({ albumName: res.albumName, playlist: res.playlist });
                 this.router.navigate(['/album']);
               });
           }

@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
 
-import { BaseResponse } from '../models/base-response';
+import { BaseResponse } from 'sharedModels/common';
 
 export class DownloadController {
     public handleDownloadSong(req: express.Request, res: express.Response) {
@@ -49,7 +49,6 @@ export class DownloadController {
     public hanldeDownloadZip(req: express.Request, res: express.Response, next: express.NextFunction) {
         const albumName: string = req.query.albumName;
         const isDownloadingPlaylist: string = req.query.isPlaylist;
-        console.log(isDownloadingPlaylist === 'true');
         const rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
         const zipDir = `${rootFolder}/zips`;
 

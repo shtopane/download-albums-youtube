@@ -4,27 +4,26 @@ import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
 import chalk from 'chalk';
 
-import { utils } from '../utils/utils';
-import { Playlist } from '../models/playlist';
-import { BaseResponse } from '../models/base-response';
-import { PlaylistResponse } from '../models/playlist-response';
+import { PlaylistResponse, BaseResponse, PlaylistItem } from 'sharedModels/common';
+
+import utils from '../utils/utils';
 
 export class AlbumController {
-    public req: express.Request;
-    public res: express.Response;
+    protected req: express.Request;
+    protected res: express.Response;
 
-    public playlist: string;
-    public url: string;
-    public videoYoutubePath: string;
-    public thumbnailUrl: string;
-    public duration: number;
-    public lengthInSeconds: string;
-    public videoLenghtObject: { hours: number; minutes: number; seconds: number; };
+    protected playlist: string;
+    protected url: string;
+    protected videoYoutubePath: string;
+    protected thumbnailUrl: string;
+    protected duration: number;
+    protected lengthInSeconds: string;
+    protected videoLenghtObject: { hours: number; minutes: number; seconds: number; };
 
-    public fileTitle = 'album';
-    public playlistArr: Playlist[] = [];
+    protected fileTitle = 'album';
+    protected playlistArr: PlaylistItem[] = [];
 
-    private counter = 1;
+    protected counter = 1;
 
     public async handleAlbumSlicing(req: express.Request, res: express.Response): Promise<void> {
         this.req = req;
@@ -83,14 +82,14 @@ export class AlbumController {
 
         this.videoYoutubePath = `${rootOutDir}/${this.fileTitle}.avi`;
 
-        /** Calculate duration for the first song. Calculate here so that if the tracklist in invalid
+        /** Calculate duration for the first song. Calculate here so that if the playlist in invalid
         *   the user will get to know quickly?
         */
         this.duration = utils
             .getSecondsFromTimeString(
                 this.lengthInSeconds,
-                this.playlistArr[0].songBegin,
-                this.playlistArr[1].songBegin);
+                this.playlistArr[0].startTime,
+                this.playlistArr[1].startTime);
 
         if (this.duration === null) {
             console.log(chalk.red('ERROR!'));
@@ -104,7 +103,7 @@ export class AlbumController {
                 .pipe(fs.createWriteStream(this.videoYoutubePath))
                 .on('finish', () => {
                     console.log(chalk.yellow('album downloaded!'));
-                    this.storeFile(this.playlistArr[0].songBegin, this.duration, this.playlistArr[0].songName);
+                    this.storeFile(this.playlistArr[0].startTime, this.duration, this.playlistArr[0].name);
                 });
         } catch (error) {
             res.status(500).send({ errorMessage: error, success: false });
@@ -127,7 +126,7 @@ export class AlbumController {
         return;
     }
 
-    private storeFile(seekTime: string, duration: number, outputFileName: string): void {
+    protected storeFile(seekTime: string, duration: number, outputFileName: string): void {
         const outPutDir = `output/${this.fileTitle}`;
 
         if (!fs.existsSync(outPutDir)) {
@@ -165,13 +164,13 @@ export class AlbumController {
             .writeToStream(stream, { end: true })
     }
 
-    private onError(err: any): void {
+    protected onError(err: any): void {
         console.log(chalk.redBright('error happended: ', err));
         this.res.status(500).json({ errorMessage: err.message, success: false });
     }
 
-    private onEnd(): void {
-        /** if we reached the end of the tracklist or the tracklist is 2 of length(1 song out of the whole album?
+    protected onEnd(): void {
+        /** if we reached the end of the playlist or the playlist is 2 of length(1 song out of the whole album?
          *  Remove if this is not logical at all.) 
          */
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
@@ -179,61 +178,60 @@ export class AlbumController {
 
             this.res.status(200).json({ success: true });
             console.log(chalk.green('finished!'));
-            return;
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {
-            let { nextDuration, songBegin } = this.generateNextDuration(this.lengthInSeconds);
+            let { nextDuration, startTime } = this.generateNextDuration(this.lengthInSeconds);
 
             if (nextDuration === null) {
                 this.invalidPlaylistErrorHandle();
             }
 
             /** call the function again with the next song data */
-            this.storeFile(songBegin, nextDuration, this.playlistArr[this.counter].songName);
+            this.storeFile(startTime, nextDuration, this.playlistArr[this.counter].name);
             this.counter++;
         }
     }
 
-    private noVideoInfoErrorHandle(): void {
+    protected noVideoInfoErrorHandle(): void {
         this.res.status(500).json({
             erroMessage: 'No video info for this file. Please, select another one',
             success: false
         } as BaseResponse);
     }
 
-    private invalidPlaylistLengthErrorHandle(): void {
+    protected invalidPlaylistLengthErrorHandle(): void {
         this.res
             .status(500)
             .json({ errorMessage: 'You cannot send only 1 track in an album!', success: false } as BaseResponse);
     }
 
-    private invalidPlaylistErrorHandle(): void {
+    protected invalidPlaylistErrorHandle(): void {
         this.res.status(500).json(
             {
-                errorMessage: 'Invalid tracklist! For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss.',
+                errorMessage: 'Invalid playlist! For videos longer than an hour the format should be either hh:mm:ss or h:mm:ss.',
                 success: false
             } as BaseResponse);
     }
 
-    private generateNextDuration(lengthInSeconds: string): { nextDuration: number; songBegin: string } {
+    protected generateNextDuration(lengthInSeconds: string): { nextDuration: number; startTime: string } {
         /** Put the end song endTime to be end of the file */
         const hoursString = `${this.videoLenghtObject.hours > 0 ? this.videoLenghtObject.hours + ':' : ''}`;
         const endSongTimeStr = `${hoursString}${this.videoLenghtObject.minutes}:${this.videoLenghtObject.seconds}`;
 
-        let songBegin = this.playlistArr[this.counter].songBegin;
-        let songEnd = this.playlistArr[this.counter + 1]
+        let startTime = this.playlistArr[this.counter].startTime;
+        let endTime = this.playlistArr[this.counter + 1]
             /** current song ends where the next begins */
-            ? this.playlistArr[this.counter + 1].songBegin
+            ? this.playlistArr[this.counter + 1].startTime
             /** current song ends at the end of the album */
             : endSongTimeStr;
 
         /** Calculate next song's duration */
-        let nextDuration = utils.getSecondsFromTimeString(lengthInSeconds, songBegin, songEnd);
+        let nextDuration = utils.getSecondsFromTimeString(lengthInSeconds, startTime, endTime);
 
         return {
             nextDuration,
-            songBegin
+            startTime: startTime
         };
     }
 

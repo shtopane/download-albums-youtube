@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
-import { SongInfo } from './tracklist-item/tracklist-item.component';
+
+import { PlaylistItemInfo } from './playlist-item/playlist-item.component';
+import { Playlist } from 'sharedModels/common';
 
 @Component({
     selector: 'app-list-playlist',
@@ -8,8 +9,8 @@ import { SongInfo } from './tracklist-item/tracklist-item.component';
     styleUrls: ['./list-playlist.component.scss']
 })
 export class ListPlaylistComponent {
-    @Input() tracklist: Tracklist;
-    @Output() listen: EventEmitter<SongInfo> = new EventEmitter<SongInfo>();
-    @Output() download: EventEmitter<SongInfo> = new EventEmitter<SongInfo>();
+    @Input() playlist: Playlist;
+    @Output() listen: EventEmitter<PlaylistItemInfo> = new EventEmitter<PlaylistItemInfo>();
+    @Output() download: EventEmitter<PlaylistItemInfo> = new EventEmitter<PlaylistItemInfo>();
     @Output() downloadZip: EventEmitter<string> = new EventEmitter<string>();
 }

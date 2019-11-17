@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TracklistItemComponent } from './tracklist-item.component';
+import { PlaylistTextareaComponent } from './playlist-textarea.component';
 
-describe('TracklistItemComponent', () => {
-  let component: TracklistItemComponent;
-  let fixture: ComponentFixture<TracklistItemComponent>;
+describe('PlaylistTextareaComponent', () => {
+  let component: PlaylistTextareaComponent;
+  let fixture: ComponentFixture<PlaylistTextareaComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [TracklistItemComponent]
+      declarations: [PlaylistTextareaComponent]
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(TracklistItemComponent);
+    fixture = TestBed.createComponent(PlaylistTextareaComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

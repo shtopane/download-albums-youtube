@@ -4,13 +4,13 @@ export const bracketRegExp = /(?<=\d)[)](?=\s)/gm; // /[)]/gm;
 export const newLinesRegExp = /(\r\n|\n|\r)/gm;
 /** match whitespace between 2 digits(end of the first song, begin of another) (?<=\d)\s+(?=\d) */
 export const whiteSpaceBetweenTwoDigitsRegExp = /(?<=\d)\s+(?=\d)/gm; // /(?<=\d) (?=\d)/gm;
-/** match whitespace before digit(when song begin is before song name in the tracklist)  (?=\d) */
+/** match whitespace before digit(when song begin is before song name in the playlist)  (?=\d) */
 export const whiteSpaceBeforeDigitRegExp = / (?=\d)/gm;
-/** match digit followed by a dot. I use this to get the song number in the tracklist (\d+[.]) */
+/** match digit followed by a dot. I use this to get the song number in the playlist (\d+[.]) */
 export const numberFollowedByDotRegExp = /(\d+[.])/gm;
 /** 
  * Regular expression for digits and :(2 : and 3 couple of digits)
- * Used to extract playable times from tracklist item - so for example if the tracklist item is
+ * Used to extract playable times from playlist item - so for example if the playlist item is
  * Hope & Pray - 00:00
  * We want the time that this song is played in the playlist (00:00)
  * \d*[:]*\d+[:]\d+

@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
+import { PlaylistResponse, Playlist } from 'sharedModels/common';
+
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 import { environment } from 'src/environments/environment';
-import { SongInfo } from 'src/app/shared/components/list-playlist/tracklist-item/tracklist-item.component';
-import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
+import { PlaylistItemInfo } from 'src/app/shared/components/list-playlist/playlist-item/playlist-item.component';
 
-type DownloadPlaylistResponse = Tracklist & {
-  success?: boolean;
-}
+
 
 @Component({
   selector: 'app-download-playlist',
@@ -18,7 +17,7 @@ type DownloadPlaylistResponse = Tracklist & {
 })
 export class DownloadPlaylistComponent implements OnInit {
   public downloadPlaylistForm: FormGroup;
-  public tracklistData: Tracklist;
+  public playlist: Playlist;
 
   constructor(
     private fb: FormBuilder,
@@ -35,16 +34,16 @@ export class DownloadPlaylistComponent implements OnInit {
       url: ['', Validators.required]
     });
 
-    // this.tracklistData = {
+    // this.playlist = {
     //   albumName: 'Test Playlists',
     //   playlist: [
     //     {
-    //       songBegin: '1:30',
-    //       songName: 'The Underground Youth - Alice (Official Video)'
+    //       startTime: '1:30',
+    //       name: 'The Underground Youth - Alice (Official Video)'
     //     },
     //     {
-    //       songBegin: '1:30',
-    //       songName: 'Test Song'
+    //       startTime: '1:30',
+    //       name: 'Test Song'
     //     },
     //   ]
     // }
@@ -54,13 +53,13 @@ export class DownloadPlaylistComponent implements OnInit {
     if (this.downloadPlaylistForm.valid) {
       this.loaderService.showLoader();
 
-      this.playlistService.downloadYotubePlaylist(this.url.value).subscribe((res: DownloadPlaylistResponse) => {
+      this.playlistService.downloadYotubePlaylist(this.url.value).subscribe((res: PlaylistResponse) => {
         this.loaderService.hideLoader();
         if (res.success) {
-          this.tracklistData = res;
+          this.playlist = res;
         }
 
-        console.log('Tracklist data', this.tracklistData);
+        console.log('Playlist data', this.playlist);
       },
         error => {
           this.loaderService.hideLoader();
@@ -70,14 +69,14 @@ export class DownloadPlaylistComponent implements OnInit {
     }
   }
 
-  public onDownloadClicked(songInfo: SongInfo): void {
-    const url = `${environment.serverUrl}/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
+  public onDownloadClicked(songInfo: PlaylistItemInfo): void {
+    const url = `${environment.serverUrl}/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
     window.open(url, '_blank');
   }
 
-  public onListenClicked(songInfo: SongInfo): void {
-    console.log('listen', songInfo.albumName, songInfo.songName);
-    const url = `${environment.serverUrl}/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
+  public onListenClicked(songInfo: PlaylistItemInfo): void {
+    console.log('listen', songInfo.title, songInfo.playlistItemName);
+    const url = `${environment.serverUrl}/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
     window.open(url, '_blank');
   }
 

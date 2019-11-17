@@ -1,9 +1,9 @@
-<div *ngIf="tracklist && tracklist?.playlist && tracklist?.playlist.length > 0" class="content">
+<div *ngIf="playlist && playlist?.playlist && playlist?.playlist.length > 0" class="content">
     <div class="uk-flex uk-flex-right uk-padding-small">
         <button class="uk-button uk-button-danger download-zip-btn"
-            (click)="downloadZip.emit(tracklist?.albumName);">Download ZIP</button>
+            (click)="downloadZip.emit(playlist?.albumName);">Download ZIP</button>
     </div>
-    <app-tracklist-item *ngFor="let tracklistItem of tracklist?.playlist" [albumName]="tracklist?.albumName"
-        [track]="tracklistItem" (listen)="listen.emit($event)" (download)="download.emit($event);">
-    </app-tracklist-item>
+    <app-playlist-item *ngFor="let playlistItem of playlist?.playlist" [albumName]="playlist?.albumName"
+        [playlistItem]="playlistItem" (listen)="listen.emit($event)" (download)="download.emit($event);">
+    </app-playlist-item>
 </div>

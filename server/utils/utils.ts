@@ -1,6 +1,8 @@
-import * as regexConstants from '../constants/regex.constants';
-import { Playlist } from '../models/playlist';
 import chalk from 'chalk';
+
+import { PlaylistItem } from 'sharedModels/common';
+
+import * as regexConstants from '../constants/regex.constants';
 
 
 /*
@@ -10,7 +12,7 @@ import chalk from 'chalk';
 class Utils {
     private unknownSongCounter = 0;
 
-    public getSongsObjects(playlist: string): Playlist[] {
+    public getSongsObjects(playlist: string): PlaylistItem[] {
         // let copy = `[00:00:00] 01. Theme From The Iron Horse
         // [00:04:32] 02. Angels
         // [00:09:35] 03. Johnny Law
@@ -31,9 +33,9 @@ class Utils {
         }
 
         const minimumAcceptedSongsComputed = 3;
-        let numberOfSongsInPlaylist = this.getLengthOfTracklist(playlist);
+        let numberOfSongsInPlaylist = this.getLengthOfPlaylist(playlist);
         let computedPlaylist: string[] = [];
-        let songObjects: Playlist[] = [];
+        let songObjects: PlaylistItem[] = [];
 
         /** replace closing bracket with empty string(if any) */
         // playlist = playlist.replace(regexConstants.bracketRegExp, '');
@@ -51,7 +53,7 @@ class Utils {
             }
         }
 
-        let songObject: Playlist;
+        let songObject: PlaylistItem;
         let fullSongName: string;
 
         for (let replacedString of computedPlaylist) {
@@ -68,8 +70,8 @@ class Utils {
         return songObjects.slice();
     }
 
-    /** Get the last number of the tracklist. With this we are getting the length of the tracklist. */
-    public getLengthOfTracklist(playlistStr: string): number {
+    /** Get the last number of the playlist. With this we are getting the length of the playlist. */
+    public getLengthOfPlaylist(playlistStr: string): number {
         let result: number;
         let songNumbers = playlistStr.match(regexConstants.numberFollowedByDotRegExp);
 
@@ -85,7 +87,7 @@ class Utils {
         return result;
     }
 
-    /** Get seconds from tracklist item time - the format is Min:Sec -> so 01:16 */
+    /** Get seconds from playlist item time - the format is Min:Sec -> so 01:16 */
     public getSecondsFromTimeString(videoTotalSeconds: string, timeFirstSong: string, timeSecondSong: string): number {
         videoTotalSeconds = videoTotalSeconds || '0';
 
@@ -97,7 +99,7 @@ class Utils {
         const columnsFirstSong = timeFirstSong.split(columnRegExp).length - 1;
         const columnsSecondSong = timeSecondSong.split(columnRegExp).length - 1;
 
-        /** TODO: Test this. It should prefix the hour if there is none in the tracklist. */
+        /** TODO: Test this. It should prefix the hour if there is none in the playlist. */
         if (columnsFirstSong < 2 && hours > 0) {
             timeFirstSong = '00:' + timeFirstSong;
             console.log('timesFirstSong', timeFirstSong);
@@ -152,14 +154,15 @@ class Utils {
         };
     }
 
-    public cutStringToTimeOnly(str: string): Playlist {
+    public cutStringToTimeOnly(str: string): PlaylistItem {
         if (!str || str === null) {
             throw new Error('No input string provided!');
         }
+
         str = str.trim();
-        let result: Playlist = {
-            songBegin: undefined,
-            songName: undefined
+        let result: PlaylistItem = {
+            startTime: undefined,
+            name: undefined
         };
 
         let matchedTime = str.match(regexConstants.trackTimeRegExp);
@@ -167,18 +170,18 @@ class Utils {
         if (matchedTime === null) {
             return;
         } else {
-            result.songBegin = matchedTime[0];
+            result.startTime = matchedTime[0];
         }
 
         let matchedSongName = str.match(regexConstants.trackNameRegExp);
         if (matchedSongName === null) {
             console.log('str', str)
-            result.songName = `UnknownSong${++this.unknownSongCounter}`;
+            result.name = `UnknownSong${++this.unknownSongCounter}`;
             return result;
         } else {
-            result.songName = matchedSongName[0];
-            result.songName = result.songName.trim();
-            console.log(chalk.bgGreen('matched song name', result.songName));
+            result.name = matchedSongName[0];
+            result.name = result.name.trim();
+            console.log(chalk.bgGreen('matched song name', result.name));
         }
 
         return result;
@@ -186,4 +189,5 @@ class Utils {
 }
 
 
-export const utils = new Utils();
+const utils = new Utils();
+export default utils;

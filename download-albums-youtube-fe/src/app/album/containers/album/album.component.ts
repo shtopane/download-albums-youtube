@@ -1,11 +1,13 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
-import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
-import { Observable, of, fromEvent, Subject } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { SongInfo } from '../../../shared/components/list-playlist/tracklist-item/tracklist-item.component';
-import { TracklistItem } from 'src/app/download-slice-albums/models/tracklist-item';
+
+import { Observable, fromEvent, Subject } from 'rxjs';
 import { tap, takeUntil } from 'rxjs/operators';
+
+import { Playlist, PlaylistItem } from 'sharedModels/common';
+
+import { environment } from 'src/environments/environment';
+import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
+import { PlaylistItemInfo } from 'src/app/shared/components/list-playlist/playlist-item/playlist-item.component';
 
 @Component({
   selector: 'app-album',
@@ -13,8 +15,8 @@ import { tap, takeUntil } from 'rxjs/operators';
   styleUrls: ['./album.component.scss']
 })
 export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
-  public tracklist$: Observable<Tracklist>;
-  public playlist: TracklistItem[];
+  public playlist$: Observable<Playlist>;
+  public playlistItemsArr: PlaylistItem[];
   public isMobile: boolean;
 
   protected destroySubs = new Subject<boolean>();
@@ -29,7 +31,7 @@ export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntil(this.destroySubs)
     ).subscribe();
 
-    this.tracklist$ = this.sliceDownloadAlbumService.getTracklist();
+    this.playlist$ = this.sliceDownloadAlbumService.getLocalPlaylist();
   }
 
   ngAfterViewInit(): void {
@@ -41,16 +43,16 @@ export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
     this.destroySubs.complete();
   }
 
-  public onDownloadClicked(songInfo: SongInfo): void {
+  public onDownloadClicked(songInfo: PlaylistItemInfo): void {
     console.log(songInfo);
     encodeURIComponent
-    const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
+    const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
     window.open(url, '_blank');
   }
 
-  public onListenClicked(songInfo: SongInfo): void {
-    console.log('listen', songInfo.albumName, songInfo.songName);
-    const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
+  public onListenClicked(songInfo: PlaylistItemInfo): void {
+    console.log('listen', songInfo.title, songInfo.playlistItemName);
+    const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
     window.open(url, '_blank');
   }
 
