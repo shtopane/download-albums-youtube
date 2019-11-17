@@ -3,15 +3,14 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
-import { TracklistItem } from 'src/app/playlist/models/tracklist-item';
 import { environment } from 'src/environments/environment';
 import { SongInfo } from 'src/app/shared/components/tracklist-item/tracklist-item.component';
+import { Tracklist } from 'src/app/playlist/models/tracklist';
 
-type DownloadPlaylistResponse = {
+type DownloadPlaylistResponse = Tracklist & {
   success?: boolean;
-  title?: string;
-  playlist?: TracklistItem[];
 }
+
 @Component({
   selector: 'app-download-playlist',
   templateUrl: './download-playlist.component.html',
@@ -19,7 +18,7 @@ type DownloadPlaylistResponse = {
 })
 export class DownloadPlaylistComponent implements OnInit {
   public downloadPlaylistForm: FormGroup;
-  public tracklistData: DownloadPlaylistResponse;
+  public tracklistData: Tracklist;
 
   constructor(
     private fb: FormBuilder,
@@ -35,6 +34,20 @@ export class DownloadPlaylistComponent implements OnInit {
     this.downloadPlaylistForm = this.fb.group({
       url: ['', Validators.required]
     });
+
+    // this.tracklistData = {
+    //   albumName: 'Test Playlists',
+    //   playlist: [
+    //     {
+    //       songBegin: '1:30',
+    //       songName: 'The Underground Youth - Alice (Official Video)'
+    //     },
+    //     {
+    //       songBegin: '1:30',
+    //       songName: 'Test Song'
+    //     },
+    //   ]
+    // }
   }
 
   public onSubmit() {
@@ -43,7 +56,11 @@ export class DownloadPlaylistComponent implements OnInit {
 
       this.playlistService.downloadYotubePlaylist(this.url.value).subscribe((res: DownloadPlaylistResponse) => {
         this.loaderService.hideLoader();
-        this.tracklistData = res;
+        if (res.success) {
+          this.tracklistData = res;
+        }
+
+        console.log('Tracklist data', this.tracklistData);
       },
         error => {
           this.loaderService.hideLoader();

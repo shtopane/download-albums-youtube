@@ -2,13 +2,6 @@
   <app-url-input controlName="url" [parent]="downloadPlaylistForm" placeholder="Put a Youtube playlist or channel url"
     (send)="onSubmit();"></app-url-input>
 </form>
-
-<div class="content">
-  <div class="uk-flex uk-flex-right uk-padding-small">
-    <button class="uk-button uk-button-danger download-zip-btn"
-      (click)="onDownloadZipClicked(tracklistData?.title);">Download ZIP</button>
-  </div>
-  <app-tracklist-item *ngFor="let tracklistItem of tracklistData?.playlist" [albumName]="tracklistData?.title"
-    [track]="tracklistItem" (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);">
-  </app-tracklist-item>
-</div>
+<app-list-playlist [tracklist]="tracklistData" (listen)="onListenClicked($event);"
+  (download)="onDownloadClicked($event);" (downloadZip)="onDownloadZipClicked($event);">
+</app-list-playlist>

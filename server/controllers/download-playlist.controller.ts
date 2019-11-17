@@ -111,7 +111,7 @@ export class DownloadPlaylistController {
 
                     this.res.status(200).send({
                         success: true,
-                        title: this.playlistTitle,
+                        albumName: this.playlistTitle,
                         playlist: tracklistData
                     });
                     return;

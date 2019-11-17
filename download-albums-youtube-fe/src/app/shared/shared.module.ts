@@ -8,8 +8,17 @@ import { UrlInputComponent } from './components/url-input/url-input.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RouterModule } from '@angular/router';
 import { TracklistItemComponent } from './components/tracklist-item/tracklist-item.component';
+import { ListPlaylistComponent } from './components/list-playlist/list-playlist.component';
 
-const components = [AlertComponent, LoaderComponent, UrlInputComponent, NavigationComponent, TracklistItemComponent];
+const components = [
+  AlertComponent,
+  LoaderComponent,
+  UrlInputComponent,
+  NavigationComponent,
+  TracklistItemComponent,
+  ListPlaylistComponent
+];
+
 @NgModule({
   declarations: [components],
   imports: [

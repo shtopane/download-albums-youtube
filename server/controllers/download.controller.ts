@@ -6,16 +6,14 @@ import { BaseResponse } from '../models/base-response';
 
 export class DownloadController {
     public handleDownloadSong(req: express.Request, res: express.Response) {
-        const albumName = req.query.albumName;
-        const songName = req.query.songName;
-        const isDownloadingPlaylist = req.query.isPlaylist;
+        const albumName: string = req.query.albumName;
+        const songName: string = req.query.songName;
+        const isDownloadingPlaylist: string = req.query.isPlaylist;
 
-        console.log(albumName);
-        console.log(songName);
-        console.log(`output/${albumName}/${songName}.mp3`);
-        const rootFolder = isDownloadingPlaylist ? 'playlistsOutput' : 'output';
+        const rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
         const folder = `${rootFolder}/${albumName}/${songName}.mp3`;
         const file = `${songName}.mp3`;
+
         // res.attachment(`output/${albumName}/${songName}.mp3`);
         res.header(`Content-Disposition', 'attachment; filename=${rootFolder}/${albumName}/${songName}.mp3`);
         res.download(folder, file, (err) => {
@@ -30,10 +28,10 @@ export class DownloadController {
     }
 
     public handleListenSong(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const albumName = req.query.albumName;
-        const songName = req.query.songName;
-        const isDownloadingPlaylist = req.query.isPlaylist;
-        const rootFolder = isDownloadingPlaylist ? 'playlistsOutput' : 'output';
+        const albumName: string = req.query.albumName;
+        const songName: string = req.query.songName;
+        const isDownloadingPlaylist: string = req.query.isPlaylist;
+        const rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
 
         const options = {
             root: `${rootFolder}/${albumName}`
@@ -49,8 +47,9 @@ export class DownloadController {
     }
 
     public hanldeDownloadZip(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const albumName = req.query.albumName;
-        const isDownloadingPlaylist = req.query.isPlaylist;
+        const albumName: string = req.query.albumName;
+        const isDownloadingPlaylist: string = req.query.isPlaylist;
+        console.log(isDownloadingPlaylist === 'true');
         const rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
         const zipDir = `${rootFolder}/zips`;
 

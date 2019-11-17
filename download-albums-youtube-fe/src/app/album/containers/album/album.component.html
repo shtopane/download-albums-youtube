@@ -1,9 +1,11 @@
 <section id="playlist" *ngIf="tracklist$ | async as tracklist">
   <h2>{{tracklist?.albumName}}</h2>
-  <div class="uk-flex uk-flex-right uk-padding-small">
+  <app-list-playlist [tracklist]="tracklist" (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);"
+    (downloadZip)="onDownloadZipClicked($event);"></app-list-playlist>
+  <!-- <div class="uk-flex uk-flex-right uk-padding-small">
     <button class="uk-button uk-button-danger download-zip-btn"
       (click)="onDownloadZipClicked(tracklist?.albumName);">Download ZIP</button>
   </div>
   <app-tracklist-item *ngFor="let track of tracklist?.playlist" [albumName]="tracklist?.albumName" [track]="track"
-    (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);"></app-tracklist-item>
+    (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);"></app-tracklist-item> -->
 </section>
