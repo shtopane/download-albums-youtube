@@ -16,7 +16,7 @@ export class AlbumController {
     public playlist: string;
     public url: string;
     public videoYoutubePath: string;
-    public tumbnailUrl: string;
+    public thumbnailUrl: string;
     public duration: number;
     public lengthInSeconds: string;
     public videoLenghtObject: { hours: number; minutes: number; seconds: number; };
@@ -65,10 +65,10 @@ export class AlbumController {
             this.fileTitle = videoInfo.title || videoInfo.player_response.videoDetails.title;
             /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
             /** TODO: Make checks for undefined! */
-            const tumbnail = videoInfo.player_response.videoDetails.thumbnail && videoInfo.player_response.videoDetails.thumbnail.thumbnails.length ?
+            const thumbnail = videoInfo.player_response.videoDetails.thumbnail && videoInfo.player_response.videoDetails.thumbnail.thumbnails.length ?
                 videoInfo.player_response.videoDetails.thumbnail.thumbnails[0].url : undefined;
 
-            this.tumbnailUrl = videoInfo.thumbnail_url || tumbnail;
+            this.thumbnailUrl = videoInfo.thumbnail_url || thumbnail;
             /** TODO: Make checks for undefined! */
             this.lengthInSeconds = videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
         } else {
@@ -116,7 +116,7 @@ export class AlbumController {
 
     public handlePlaylist(req: express.Request, res: express.Response): void {
         for (let track of this.playlistArr) {
-            track.tumbnail = this.tumbnailUrl;
+            track.thumbnail = this.thumbnailUrl;
         }
 
         const response: PlaylistResponse = {

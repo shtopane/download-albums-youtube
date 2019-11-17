@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-import { TracklistItem } from 'src/app/playlist/models/tracklist-item';
+import { TracklistItem } from 'src/app/download-slice-albums/models/tracklist-item';
 
 export type SongInfo = {
   albumName: string;

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
-import { Tracklist } from 'src/app/playlist/models/tracklist';
+import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
 import { SongInfo } from './tracklist-item/tracklist-item.component';
 
 @Component({

@@ -1,10 +1,10 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
-import { Tracklist } from 'src/app/playlist/models/tracklist';
+import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
 import { Observable, of, fromEvent, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { SongInfo } from '../../../shared/components/list-playlist/tracklist-item/tracklist-item.component';
-import { TracklistItem } from 'src/app/playlist/models/tracklist-item';
+import { TracklistItem } from 'src/app/download-slice-albums/models/tracklist-item';
 import { tap, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -42,18 +42,20 @@ export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   public onDownloadClicked(songInfo: SongInfo): void {
-    const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
+    console.log(songInfo);
+    encodeURIComponent
+    const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
     window.open(url, '_blank');
   }
 
   public onListenClicked(songInfo: SongInfo): void {
     console.log('listen', songInfo.albumName, songInfo.songName);
-    const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
+    const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
     window.open(url, '_blank');
   }
 
   public onDownloadZipClicked(albumName: string): void {
-    const url = `${environment.serverUrl}/downloadZip?isPlaylist=false&albumName=${albumName}`;
+    const url = `${environment.serverUrl}/downloadZip?isPlaylist=false&albumName=${encodeURIComponent(albumName)}`;
     window.open(url, '_blank');
   }
 

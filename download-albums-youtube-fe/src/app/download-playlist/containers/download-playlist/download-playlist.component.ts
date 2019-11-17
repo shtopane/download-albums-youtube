@@ -5,7 +5,7 @@ import { PlaylistService } from 'src/app/shared/services/playlist/playlist.servi
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 import { environment } from 'src/environments/environment';
 import { SongInfo } from 'src/app/shared/components/list-playlist/tracklist-item/tracklist-item.component';
-import { Tracklist } from 'src/app/playlist/models/tracklist';
+import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
 
 type DownloadPlaylistResponse = Tracklist & {
   success?: boolean;
@@ -71,18 +71,18 @@ export class DownloadPlaylistComponent implements OnInit {
   }
 
   public onDownloadClicked(songInfo: SongInfo): void {
-    const url = `${environment.serverUrl}/download?isPlaylist=true&albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
+    const url = `${environment.serverUrl}/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
     window.open(url, '_blank');
   }
 
   public onListenClicked(songInfo: SongInfo): void {
     console.log('listen', songInfo.albumName, songInfo.songName);
-    const url = `${environment.serverUrl}/listen?isPlaylist=true&albumName=${songInfo.albumName}&songName=${songInfo.songName}`;
+    const url = `${environment.serverUrl}/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.albumName)}&songName=${encodeURIComponent(songInfo.songName)}`;
     window.open(url, '_blank');
   }
 
   public onDownloadZipClicked(albumName: string): void {
-    const url = `${environment.serverUrl}/downloadZip?isPlaylist=true&albumName=${albumName}`;
+    const url = `${environment.serverUrl}/downloadZip?isPlaylist=true&albumName=${encodeURIComponent(albumName)}`;
     window.open(url, '_blank');
   }
 

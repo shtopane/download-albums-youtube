@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { Tracklist } from 'src/app/playlist/models/tracklist';
+import { Tracklist } from 'src/app/download-slice-albums/models/tracklist';
 
 @Injectable({
   providedIn: 'root'
