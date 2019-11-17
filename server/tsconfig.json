@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "baseUrl": "./",
         "moduleResolution": "node",
         "strictPropertyInitialization": false,
         "sourceMap": true,
@@ -17,12 +18,26 @@
         ],
         "lib": [
             "es2015"
-        ]
+        ],
+        "paths": {
+            "controllers/*": [
+                "./controllers/*"
+            ],
+            "constants/*": [
+                "./contstants/*"
+            ],
+            "models/*": [
+                "./models/*"
+            ],
+            "sharedModels/*": [
+                "../shared-models/*"
+            ]
+        }
     },
     "include": [
         "./**/*"
     ],
     "exclude": [
-        "node_modules",
+        "node_modules"
     ]
 }

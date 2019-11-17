@@ -1,0 +1,20 @@
+<div class="
+  playlist-item
+  uk-box-shadow-hover-large
+  uk-flex
+  uk-box-shadow-medium 
+  uk-padding-small 
+  uk-flex-between
+">
+  <div class="img-container">
+    <img [src]="playlistItem.thumbnail" width="150" alt="">
+  </div>
+  <div class="song-info-wrap">
+    <span class="song-info">{{playlistItem.name}} - {{playlistItem.startTime}}</span>
+  </div>
+  <div class="uk-margin-auto-top">
+    <button class="uk-button uk-button-secondary uk-width-1-1 uk-margin-small-bottom"
+      (click)="onDownloadClicked()">Download</button>
+    <button class="uk-button uk-button-primary uk-width-1-1" (click)="onListenClicked()">Listen</button>
+  </div>
+</div>

@@ -1,0 +1,5 @@
+<div id="input-wrap" [formGroup]="parent">
+  <input [formControlName]="controlName" class="URL-input uk-input" [placeholder]="placeholder">
+  <button [disabled]="disabled" type="submit" class="convert-button uk-button uk-button-danger"
+    (click)="send.emit()">Send</button>
+</div>

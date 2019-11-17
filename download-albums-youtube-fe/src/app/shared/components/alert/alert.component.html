@@ -1,0 +1,6 @@
+<ng-container>
+  <div uk-alert class="uk-alert-danger alert" *ngIf="message$ | async as message">
+    <a class="uk-alert-close" uk-close (click)="onClose();"></a>
+    <p class="alert-text">{{message}}</p>
+  </div>
+</ng-container>

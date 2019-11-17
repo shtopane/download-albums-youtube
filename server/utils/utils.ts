@@ -1,6 +1,8 @@
-import * as regexConstants from '../constants/regex.constants';
-import { Playlist } from '../models/playlist';
 import chalk from 'chalk';
+
+import { PlaylistItem } from 'sharedModels/common';
+
+import * as regexConstants from '../constants/regex.constants';
 
 
 /*
@@ -10,20 +12,36 @@ import chalk from 'chalk';
 class Utils {
     private unknownSongCounter = 0;
 
-    public getSongsObjects(playlist: string): Playlist[] {
+    public getSongsObjects(playlist: string): PlaylistItem[] {
+        // let copy = `[00:00:00] 01. Theme From The Iron Horse
+        // [00:04:32] 02. Angels
+        // [00:09:35] 03. Johnny Law
+        // [00:12:01] 04. Poppin' Wheelies
+        // [00:14:01] 05. War
+        // [00:18:27] 06. Oh My
+        // [00:19:51] 07. You're Mine
+        // [00:21:25] 08. Take Out
+        // [00:26:10] 09. Dreaming About Dreams
+        // [00:27:25] 10. Da Da Da
+        // [00:29:16] 11. The Fuzz
+        // [00:33:12] 12. Jean Jacket John
+        // [00:34:24] 13. Ain't Right
+        // [00:37:52] 14. Plan B
+        // [00:39:44] 15. Peace`;
         if (!playlist || playlist === null) {
             throw new Error('No playlist!');
         }
+
         const minimumAcceptedSongsComputed = 3;
-        let numberOfSongsInPlaylist = this.getLengthOfTracklist(playlist);
-        let computedPlaylist: string[];
-        let songObjects: Playlist[] = [];
+        let numberOfSongsInPlaylist = this.getLengthOfPlaylist(playlist);
+        let computedPlaylist: string[] = [];
+        let songObjects: PlaylistItem[] = [];
 
         /** replace closing bracket with empty string(if any) */
         // playlist = playlist.replace(regexConstants.bracketRegExp, '');
 
-        /** TODO: Wrong logic! We spit it one way and if it is not efficient, we try the others. */
-        computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
+        // /** TODO: Wrong logic! We spit it one way and if it is not efficient, we try the others. */
+        // computedPlaylist = playlist.split(regexConstants.whiteSpaceBetweenTwoDigitsRegExp);
         console.log('computed first time', computedPlaylist);
         if (computedPlaylist.length < (numberOfSongsInPlaylist || minimumAcceptedSongsComputed)) {
             computedPlaylist = playlist.split(regexConstants.newLinesRegExp);
@@ -35,15 +53,14 @@ class Utils {
             }
         }
 
-        let songObject: Playlist;
+        let songObject: PlaylistItem;
         let fullSongName: string;
 
         for (let replacedString of computedPlaylist) {
             if (replacedString.trim()) {
-                console.log(chalk.bold('replaced string not trimmed', replacedString));
                 fullSongName = replacedString.trim();
                 songObject = this.cutStringToTimeOnly(fullSongName);
-
+                console.log(songObject);
                 if (songObject && Object.keys(songObject).length > 0) {
                     songObjects.push(songObject)
                 }
@@ -53,8 +70,8 @@ class Utils {
         return songObjects.slice();
     }
 
-    /** Get the last number of the tracklist. With this we are getting the length of the tracklist. */
-    public getLengthOfTracklist(playlistStr: string): number {
+    /** Get the last number of the playlist. With this we are getting the length of the playlist. */
+    public getLengthOfPlaylist(playlistStr: string): number {
         let result: number;
         let songNumbers = playlistStr.match(regexConstants.numberFollowedByDotRegExp);
 
@@ -70,7 +87,7 @@ class Utils {
         return result;
     }
 
-    /** Get seconds from tracklist item time - the format is Min:Sec -> so 01:16 */
+    /** Get seconds from playlist item time - the format is Min:Sec -> so 01:16 */
     public getSecondsFromTimeString(videoTotalSeconds: string, timeFirstSong: string, timeSecondSong: string): number {
         videoTotalSeconds = videoTotalSeconds || '0';
 
@@ -82,7 +99,7 @@ class Utils {
         const columnsFirstSong = timeFirstSong.split(columnRegExp).length - 1;
         const columnsSecondSong = timeSecondSong.split(columnRegExp).length - 1;
 
-        /** TODO: Test this. It should prefix the hour if there is none in the tracklist. */
+        /** TODO: Test this. It should prefix the hour if there is none in the playlist. */
         if (columnsFirstSong < 2 && hours > 0) {
             timeFirstSong = '00:' + timeFirstSong;
             console.log('timesFirstSong', timeFirstSong);
@@ -137,14 +154,15 @@ class Utils {
         };
     }
 
-    public cutStringToTimeOnly(str: string): Playlist {
+    public cutStringToTimeOnly(str: string): PlaylistItem {
         if (!str || str === null) {
             throw new Error('No input string provided!');
         }
 
-        let result: Playlist = {
-            songBegin: undefined,
-            songName: undefined
+        str = str.trim();
+        let result: PlaylistItem = {
+            startTime: undefined,
+            name: undefined
         };
 
         let matchedTime = str.match(regexConstants.trackTimeRegExp);
@@ -152,19 +170,18 @@ class Utils {
         if (matchedTime === null) {
             return;
         } else {
-            result.songBegin = matchedTime[0];
+            result.startTime = matchedTime[0];
         }
 
         let matchedSongName = str.match(regexConstants.trackNameRegExp);
-        console.log(chalk.bgBlack('original string', str));
-
         if (matchedSongName === null) {
-            result.songName = `UnknownSong${++this.unknownSongCounter}`;
+            console.log('str', str)
+            result.name = `UnknownSong${++this.unknownSongCounter}`;
             return result;
         } else {
-            result.songName = matchedSongName[0];
-            result.songName = result.songName.trim();
-            console.log(chalk.bgGreen('matched song name', result.songName));
+            result.name = matchedSongName[0];
+            result.name = result.name.trim();
+            console.log(chalk.bgGreen('matched song name', result.name));
         }
 
         return result;
@@ -172,4 +189,5 @@ class Utils {
 }
 
 
-export const utils = new Utils();
+const utils = new Utils();
+export default utils;
