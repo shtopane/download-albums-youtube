@@ -26,8 +26,10 @@ export class DownloadPlaylistController {
     protected req: express.Request;
     protected counter = 0;
     protected playlistTitle: string;
+    protected playlistInfo: ytdl.videoInfo;
     protected youtubePlaylistData: YoutubePlaylistItem[];
     protected rootDir = 'playlistsOutput';
+    protected startTime: number;
 
     constructor() {
         if (!fs.existsSync(this.rootDir)) {
@@ -70,6 +72,7 @@ export class DownloadPlaylistController {
                 generateNextSongPath = this.generateSongPath(firstSongTitle);
             }
 
+            this.startTime = Date.now();
             this.download(firstSongUrl, generateNextSongPath(firstSongTitle), generateNextSongPath);
 
         } else {
@@ -80,15 +83,14 @@ export class DownloadPlaylistController {
     }
 
     protected download(url: string, songPath: string, funcToGenerateNextSongPath): void {
-        console.log('hereeee');
-        let stream = ytdl(url);
+        const stream = ytdl(url);
+        const outStream = fs.createWriteStream(songPath);
 
         ffmpeg(stream)
             .toFormat('mp3')
-            .audioBitrate(128)
-            .save(songPath)
+            .audioBitrate(160)
             .on('end', () => {
-                console.log(chalk.yellow('song downloaded!', url, songPath));
+                console.log(chalk.yellow('song downloaded!', songPath));
                 this.counter++;
 
                 if (this.youtubePlaylistData[this.counter]) {
@@ -97,9 +99,8 @@ export class DownloadPlaylistController {
 
                     this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
                 } else {
-                    console.log('finished');
-                    const sliceIndex = songPath.lastIndexOf('/');
-                    const playlistDownloadPath = songPath.slice(0, sliceIndex);
+                    console.log(chalk.green(`Finished! It took: ${(Date.now() - this.startTime) / 1000}s`));
+
                     const tracklistData = this.youtubePlaylistData.map(item => {
                         return {
                             songBegin: item.duration,
@@ -124,26 +125,7 @@ export class DownloadPlaylistController {
             .on('error', (err) => {
                 console.log('ERROR ', err);
             })
-        // ytdl(url)
-        //     .pipe(fs.createWriteStream(songPath))
-        //     .on('finish', () => {
-        //         console.log(chalk.yellow('song downloaded!', url, songPath));
-        //         this.counter++;
-
-        //         if (this.youtubePlaylistData[this.counter]) {
-        //             let nextUrl = this.youtubePlaylistData[this.counter].url_simple;
-        //             let nextSongPath = funcToGenerateNextSongPath(this.youtubePlaylistData[this.counter].title);
-
-        //             this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
-        //         } else {
-        //             console.log('finished');
-        //             this.res.status(200).send({
-        //                 success: true
-        //             });
-        //             return;
-        //         }
-
-        //     });
+            .writeToStream(outStream, { end: true });
 
     }
     protected generateSongPath(songName: string, folder?: string): (songName: string) => string {
