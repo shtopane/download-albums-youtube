@@ -7,7 +7,7 @@ import { LoaderComponent } from './components/loader/loader.component';
 import { UrlInputComponent } from './components/url-input/url-input.component';
 import { NavigationComponent } from './components/navigation/navigation.component';
 import { RouterModule } from '@angular/router';
-import { TracklistItemComponent } from './components/tracklist-item/tracklist-item.component';
+import { TracklistItemComponent } from './components/list-playlist/tracklist-item/tracklist-item.component';
 import { ListPlaylistComponent } from './components/list-playlist/list-playlist.component';
 
 const components = [

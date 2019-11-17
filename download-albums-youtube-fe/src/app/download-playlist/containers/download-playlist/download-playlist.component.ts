@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';
 import { environment } from 'src/environments/environment';
-import { SongInfo } from 'src/app/shared/components/tracklist-item/tracklist-item.component';
+import { SongInfo } from 'src/app/shared/components/list-playlist/tracklist-item/tracklist-item.component';
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 
 type DownloadPlaylistResponse = Tracklist & {

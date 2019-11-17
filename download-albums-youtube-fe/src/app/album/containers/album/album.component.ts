@@ -3,7 +3,7 @@ import { PlaylistService } from 'src/app/shared/services/playlist/playlist.servi
 import { Tracklist } from 'src/app/playlist/models/tracklist';
 import { Observable, of, fromEvent, Subject } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { SongInfo } from '../../../shared/components/tracklist-item/tracklist-item.component';
+import { SongInfo } from '../../../shared/components/list-playlist/tracklist-item/tracklist-item.component';
 import { TracklistItem } from 'src/app/playlist/models/tracklist-item';
 import { tap, takeUntil } from 'rxjs/operators';
 

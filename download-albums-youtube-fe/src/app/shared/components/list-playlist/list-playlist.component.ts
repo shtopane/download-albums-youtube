@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 import { Tracklist } from 'src/app/playlist/models/tracklist';
-import { SongInfo } from '../tracklist-item/tracklist-item.component';
+import { SongInfo } from './tracklist-item/tracklist-item.component';
 
 @Component({
     selector: 'app-list-playlist',
