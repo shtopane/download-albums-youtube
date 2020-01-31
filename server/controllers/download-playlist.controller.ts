@@ -3,7 +3,6 @@ import * as fs from 'fs';
 import * as ytpl from 'ytpl';
 import * as ytdl from 'ytdl-core';
 import * as ffmpeg from 'fluent-ffmpeg';
-import * as chalk from 'chalk';
 
 import { PlaylistResponse, PlaylistItem } from '../../shared-models/common';
 
@@ -93,7 +92,7 @@ export class DownloadPlaylistController {
             .toFormat('mp3')
             .audioBitrate(160)
             .on('end', () => {
-                console.log(chalk.yellow('song downloaded!', songPath));
+                console.log('song downloaded!', songPath);
                 this.counter++;
 
                 if (this.youtubePlaylistData[this.counter]) {
@@ -102,7 +101,7 @@ export class DownloadPlaylistController {
 
                     this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
                 } else {
-                    console.log(chalk.green(`Finished! It took: ${(Date.now() - this.startTime) / 1000}s`));
+                    console.log(`Finished! It took: ${(Date.now() - this.startTime) / 1000}s`);
 
                     const playlistArr: PlaylistItem[] = this.youtubePlaylistData.map(item => {
                         return {

@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as ytdl from 'ytdl-core';
 import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
-import * as chalk from 'chalk';
 
 import utils from '../utils/utils';
 import { PlaylistItem, PlaylistResponse, BaseResponse } from '../../shared-models/common';
@@ -71,7 +70,7 @@ export class AlbumController {
             this.noVideoInfoErrorHandle();
         }
 
-        console.log(chalk.yellow('length of video', this.lengthInSeconds))
+        console.log('length of video', this.lengthInSeconds)
         this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
 
         const rootOutDir = 'output';
@@ -91,7 +90,7 @@ export class AlbumController {
                 this.playlistArr[1].startTime);
 
         if (this.duration === null) {
-            console.log(chalk.red('ERROR!'));
+            console.log('ERROR!');
             this.invalidPlaylistErrorHandle();
         }
 
@@ -101,7 +100,7 @@ export class AlbumController {
             })
                 .pipe(fs.createWriteStream(this.videoYoutubePath))
                 .on('finish', () => {
-                    console.log(chalk.yellow('album downloaded!'));
+                    console.log('album downloaded!');
                     this.storeFile(this.playlistArr[0].startTime, this.duration, this.playlistArr[0].name);
                 });
         } catch (error) {
@@ -136,12 +135,12 @@ export class AlbumController {
         let stream: fs.WriteStream = fs.createWriteStream(audioFileName);
 
         console.log(
-            chalk.yellowBright(`
+            `
             Seektime : ${seekTime}, 
             Duration: ${duration}, 
             File: ${outputFileName}, 
             Destination: ${audioFileName}, 
-            Source: ${this.videoYoutubePath}`));
+            Source: ${this.videoYoutubePath}`);
 
         ffmpeg(fs.createReadStream(this.videoYoutubePath))
             /** currentSeekTime */
@@ -164,7 +163,7 @@ export class AlbumController {
     }
 
     protected onError(err: any): void {
-        console.log(chalk.redBright('error happended: ', err));
+        console.log('error happended: ', err);
         this.res.status(500).json({ errorMessage: err.message, success: false });
     }
 
@@ -176,7 +175,6 @@ export class AlbumController {
             this.counter = 0;
 
             this.res.status(200).json({ success: true });
-            console.log(chalk.green('finished!'));
         } else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();
         } else {

@@ -7,11 +7,10 @@
     "serve": "ts-node ./server/index.ts",
     "compiled:server:start": "node ./server/index.js",
     "build:server": "npx tsc ./server/index.ts",
-    "build": "ng build",
+    "build": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postinstall": "ng build --prod"
   },
   "private": true,
   "dependencies": {

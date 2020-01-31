@@ -1,7 +1,4 @@
-import * as chalk from 'chalk';
-
 import { PlaylistItem } from '../../shared-models/common';
-
 import * as regexConstants from '../constants/regex.constants';
 
 
@@ -181,7 +178,7 @@ class Utils {
         } else {
             result.name = matchedSongName[0];
             result.name = result.name.trim();
-            console.log(chalk.bgGreen('matched song name', result.name));
+            console.log('matched song name', result.name);
         }
 
         return result;
