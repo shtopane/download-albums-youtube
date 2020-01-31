@@ -9,15 +9,17 @@ let port = process.env.PORT;
 if (port == null || port === '') {
   port = '4000';
 }
+app.options('*', cors())
 
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  next();
-});
+// var corsOptions = {
+//   origin: '*',
+//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
+// app.use(cors(corsOptions));
+
 
 app.use(express.static(path.join(__dirname, 'output')));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
