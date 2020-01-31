@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as ytdl from 'ytdl-core';
 import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 
 import { PlaylistResponse, BaseResponse, PlaylistItem } from 'sharedModels/common';
 

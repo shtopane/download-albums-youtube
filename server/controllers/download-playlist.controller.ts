@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import * as ytpl from 'ytpl';
 import * as ytdl from 'ytdl-core';
 import * as ffmpeg from 'fluent-ffmpeg';
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 
 import { PlaylistResponse, PlaylistItem } from 'sharedModels/common';
 

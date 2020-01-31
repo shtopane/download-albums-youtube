@@ -1,4 +1,4 @@
-import chalk from 'chalk';
+import * as chalk from 'chalk';
 
 import { PlaylistItem } from 'sharedModels/common';
 
