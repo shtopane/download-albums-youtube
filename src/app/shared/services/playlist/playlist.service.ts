@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable, of } from 'rxjs';
 
-import { Playlist } from 'sharedModels/common';
 
 import { environment } from 'src/environments/environment';
+import { Playlist } from '../../../../../shared-models/common';
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class PlaylistService {
   }
 
   public sendPlaylist(url: string, playlist: string): Observable<any> {
-    return this.http.post(`${environment.serverUrl}/songs`, { playlist: playlist, url: url });
+    return this.http.post(`${environment.serverUrl}/songs`, { playlist, url });
   }
 
   public getPlaylist(): Observable<Playlist> {

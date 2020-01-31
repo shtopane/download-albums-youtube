@@ -4,9 +4,8 @@ import * as fs from 'fs';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as chalk from 'chalk';
 
-import { PlaylistResponse, BaseResponse, PlaylistItem } from 'sharedModels/common';
-
 import utils from '../utils/utils';
+import { PlaylistItem, PlaylistResponse, BaseResponse } from '../../shared-models/common';
 
 export class AlbumController {
     protected req: express.Request;

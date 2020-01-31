@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Observable, fromEvent, Subject } from 'rxjs';
 import { tap, takeUntil } from 'rxjs/operators';
 
-import { Playlist, PlaylistItem } from 'sharedModels/common';
+import { Playlist, PlaylistItem } from 'shared-models/common';
 
 import { environment } from 'src/environments/environment';
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';

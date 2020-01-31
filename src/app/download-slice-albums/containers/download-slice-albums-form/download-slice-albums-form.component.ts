@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { PlaylistResponse, BaseResponse } from 'sharedModels/common';
+import { PlaylistResponse, BaseResponse } from 'shared-models/common';
 
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { AlertService } from 'src/app/shared/services/alert/alert.service';

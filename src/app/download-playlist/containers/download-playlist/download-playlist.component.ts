@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
-import { PlaylistResponse, Playlist } from 'sharedModels/common';
+import { PlaylistResponse, Playlist } from 'shared-models/common';
 
 import { PlaylistService } from 'src/app/shared/services/playlist/playlist.service';
 import { LoaderService } from 'src/app/shared/services/loader/loader.service';

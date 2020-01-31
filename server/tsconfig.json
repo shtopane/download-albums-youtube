@@ -12,9 +12,9 @@
         "module": "commonjs",
         "outDir": "./build",
         "typeRoots": [
-            "./node_modules/ytdl-core/typings",
-            "./node_modules/@types",
-            "./typings"
+            "../node_modules/ytdl-core/typings",
+            "../node_modules/@types",
+            "../typings"
         ],
         "lib": [
             "es2015"
@@ -29,7 +29,7 @@
             "models/*": [
                 "./models/*"
             ],
-            "sharedModels/*": [
+            "shared-models/*": [
                 "../shared-models/*"
             ]
         }

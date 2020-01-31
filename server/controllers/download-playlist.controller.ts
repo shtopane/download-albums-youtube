@@ -5,7 +5,7 @@ import * as ytdl from 'ytdl-core';
 import * as ffmpeg from 'fluent-ffmpeg';
 import * as chalk from 'chalk';
 
-import { PlaylistResponse, PlaylistItem } from 'sharedModels/common';
+import { PlaylistResponse, PlaylistItem } from '../../shared-models/common';
 
 type YoutubePlaylistItem = {
     author?: {

@@ -5,7 +5,7 @@
     "outDir": "./dist/out-tsc",
     "sourceMap": true,
     "declaration": false,
-    "module": "es2015",
+    "module": "commonjs",
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -19,8 +19,8 @@
       "dom"
     ],
     "paths": {
-      "sharedModels/*": [
-        "../shared-models/*"
+      "shared-models/*": [
+        "shared-models/*"
       ],
       "src/*": [
         "./src/*"

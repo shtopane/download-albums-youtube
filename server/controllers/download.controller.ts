@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as fs from 'fs';
 import * as archiver from 'archiver';
 
-import { BaseResponse } from 'sharedModels/common';
+import { BaseResponse } from '../../shared-models/common';
 
 export class DownloadController {
     public handleDownloadSong(req: express.Request, res: express.Response) {

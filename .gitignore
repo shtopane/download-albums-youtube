@@ -51,4 +51,6 @@ server/app/dist/**
 server/node_modules
 server/output
 server/playlistsOutput
+output
+playlistsOutput
 *txt

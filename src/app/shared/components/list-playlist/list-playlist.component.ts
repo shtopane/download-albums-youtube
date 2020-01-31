@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter } from "@angular/core";
 
 import { PlaylistItemInfo } from './playlist-item/playlist-item.component';
-import { Playlist } from 'sharedModels/common';
+import { Playlist } from 'shared-models/common';
 
 @Component({
     selector: 'app-list-playlist',

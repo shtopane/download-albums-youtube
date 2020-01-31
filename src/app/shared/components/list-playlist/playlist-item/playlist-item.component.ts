@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 
-import { PlaylistItem } from 'sharedModels/common';
+import { PlaylistItem } from 'shared-models/common';
 
 export type PlaylistItemInfo = {
   title: string;
