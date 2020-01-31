@@ -38,7 +38,6 @@ exports.__esModule = true;
 var ytdl = require("ytdl-core");
 var fs = require("fs");
 var ffmpeg = require("fluent-ffmpeg");
-var chalk = require("chalk");
 var utils_1 = require("../utils/utils");
 var AlbumController = /** @class */ (function () {
     function AlbumController() {
@@ -91,7 +90,7 @@ var AlbumController = /** @class */ (function () {
                         else {
                             this.noVideoInfoErrorHandle();
                         }
-                        console.log(chalk.yellow('length of video', this.lengthInSeconds));
+                        console.log('length of video', this.lengthInSeconds);
                         this.videoLenghtObject = utils_1["default"].getHoursFromSeconds(this.lengthInSeconds);
                         rootOutDir = 'output';
                         if (!fs.existsSync(rootOutDir)) {
@@ -104,7 +103,7 @@ var AlbumController = /** @class */ (function () {
                         this.duration = utils_1["default"]
                             .getSecondsFromTimeString(this.lengthInSeconds, this.playlistArr[0].startTime, this.playlistArr[1].startTime);
                         if (this.duration === null) {
-                            console.log(chalk.red('ERROR!'));
+                            console.log('ERROR!');
                             this.invalidPlaylistErrorHandle();
                         }
                         try {
@@ -113,7 +112,7 @@ var AlbumController = /** @class */ (function () {
                             })
                                 .pipe(fs.createWriteStream(this.videoYoutubePath))
                                 .on('finish', function () {
-                                console.log(chalk.yellow('album downloaded!'));
+                                console.log('album downloaded!');
                                 _this.storeFile(_this.playlistArr[0].startTime, _this.duration, _this.playlistArr[0].name);
                             });
                         }
@@ -146,7 +145,7 @@ var AlbumController = /** @class */ (function () {
         }
         var audioFileName = outPutDir + "/" + outputFileName + ".mp3";
         var stream = fs.createWriteStream(audioFileName);
-        console.log(chalk.yellowBright("\n            Seektime : " + seekTime + ", \n            Duration: " + duration + ", \n            File: " + outputFileName + ", \n            Destination: " + audioFileName + ", \n            Source: " + this.videoYoutubePath));
+        console.log("\n            Seektime : " + seekTime + ", \n            Duration: " + duration + ", \n            File: " + outputFileName + ", \n            Destination: " + audioFileName + ", \n            Source: " + this.videoYoutubePath);
         ffmpeg(fs.createReadStream(this.videoYoutubePath))
             /** currentSeekTime */
             .seekInput(seekTime)
@@ -167,7 +166,7 @@ var AlbumController = /** @class */ (function () {
             .writeToStream(stream, { end: true });
     };
     AlbumController.prototype.onError = function (err) {
-        console.log(chalk.redBright('error happended: ', err));
+        console.log('error happended: ', err);
         this.res.status(500).json({ errorMessage: err.message, success: false });
     };
     AlbumController.prototype.onEnd = function () {
@@ -177,7 +176,6 @@ var AlbumController = /** @class */ (function () {
         if (this.counter >= this.playlistArr.length || this.playlistArr.length <= 2) {
             this.counter = 0;
             this.res.status(200).json({ success: true });
-            console.log(chalk.green('finished!'));
         }
         else if (this.playlistArr.length === 1) {
             this.invalidPlaylistLengthErrorHandle();

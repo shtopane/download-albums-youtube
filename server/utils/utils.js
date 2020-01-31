@@ -1,6 +1,5 @@
 "use strict";
 exports.__esModule = true;
-var chalk = require("chalk");
 var regexConstants = require("../constants/regex.constants");
 /*
  *  Check how many times a char is in string -> .split( new RegExp( ":", "gi" ) ).length-1
@@ -153,7 +152,7 @@ var Utils = /** @class */ (function () {
         else {
             result.name = matchedSongName[0];
             result.name = result.name.trim();
-            console.log(chalk.bgGreen('matched song name', result.name));
+            console.log('matched song name', result.name);
         }
         return result;
     };

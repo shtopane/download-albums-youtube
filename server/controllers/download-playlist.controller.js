@@ -39,7 +39,6 @@ var fs = require("fs");
 var ytpl = require("ytpl");
 var ytdl = require("ytdl-core");
 var ffmpeg = require("fluent-ffmpeg");
-var chalk = require("chalk");
 var DownloadPlaylistController = /** @class */ (function () {
     function DownloadPlaylistController() {
         this.counter = 0;
@@ -106,7 +105,7 @@ var DownloadPlaylistController = /** @class */ (function () {
             .toFormat('mp3')
             .audioBitrate(160)
             .on('end', function () {
-            console.log(chalk.yellow('song downloaded!', songPath));
+            console.log('song downloaded!', songPath);
             _this.counter++;
             if (_this.youtubePlaylistData[_this.counter]) {
                 var nextUrl = _this.youtubePlaylistData[_this.counter].url_simple;
@@ -114,7 +113,7 @@ var DownloadPlaylistController = /** @class */ (function () {
                 _this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
             }
             else {
-                console.log(chalk.green("Finished! It took: " + (Date.now() - _this.startTime) / 1000 + "s"));
+                console.log("Finished! It took: " + (Date.now() - _this.startTime) / 1000 + "s");
                 var playlistArr = _this.youtubePlaylistData.map(function (item) {
                     return {
                         startTime: item.duration,
