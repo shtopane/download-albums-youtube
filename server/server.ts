@@ -9,13 +9,12 @@ let port = process.env.PORT;
 if (port == null || port === '') {
   port = '4000';
 }
-app.options('*', cors())
 
-// var corsOptions = {
-//   origin: '*',
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-// }
-// app.use(cors(corsOptions));
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+app.use(cors(corsOptions));
 
 
 app.use(express.static(path.join(__dirname, 'output')));
