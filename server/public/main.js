@@ -988,7 +988,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 exports.environment = {
     production: false,
-    serverUrl: '/'
+    serverUrl: 'http://localhost:4000'
 };
 /*
  * For easier debugging in development mode, you can import the following file
