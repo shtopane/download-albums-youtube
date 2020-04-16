@@ -9,9 +9,9 @@ var albumController = new album_controller_1.AlbumController();
 var downloadController = new download_controller_1.DownloadController();
 var downloadPlaylistController = new download_playlist_controller_1.DownloadPlaylistController();
 /** Pass the correct this to the contorller */
-server_1.app.post('/songs', albumController.handleAlbumSlicing.bind(albumController));
-server_1.app.get('/playlist', albumController.handlePlaylist.bind(albumController));
-server_1.app.post('/download-playlist', downloadPlaylistController.handleDownloadPlaylistFromYoutube.bind(downloadPlaylistController));
-server_1.app.get('/download', downloadController.handleDownloadSong.bind(downloadController));
-server_1.app.get('/downloadZip', downloadController.hanldeDownloadZip.bind(downloadController));
-server_1.app.get('/listen', downloadController.handleListenSong.bind(downloadController));
+server_1.app.post('/api/songs', albumController.handleAlbumSlicing.bind(albumController));
+server_1.app.get('/api/playlist', albumController.handlePlaylist.bind(albumController));
+server_1.app.post('/api/download-playlist', downloadPlaylistController.handleDownloadPlaylistFromYoutube.bind(downloadPlaylistController));
+server_1.app.get('/api/download', downloadController.handleDownloadSong.bind(downloadController));
+server_1.app.get('/api/downloadZip', downloadController.hanldeDownloadZip.bind(downloadController));
+server_1.app.get('/api/listen', downloadController.handleListenSong.bind(downloadController));

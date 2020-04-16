@@ -5,16 +5,15 @@ var cors = require("cors");
 var bodyParser = require("body-parser");
 var path = require("path");
 exports.app = express();
-var port = process.env.PORT;
-if (port == null || port === '') {
-    port = '4000';
-}
-exports.app.options('*', cors());
-// var corsOptions = {
-//   origin: '*',
-//   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+var port = process.env.PORT || 4000;
+// if (port == null || port === '') {
+//   port = '4000';
 // }
-// app.use(cors(corsOptions));
+var corsOptions = {
+    origin: '*',
+    optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+exports.app.use(cors(corsOptions));
 exports.app.use(express.static(path.join(__dirname, 'output')));
 exports.app.use(express.static(path.join(__dirname, 'public')));
 exports.app.use(bodyParser.json());
