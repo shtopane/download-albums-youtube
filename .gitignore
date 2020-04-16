@@ -52,8 +52,7 @@ server/app/dist/**
 server/node_modules
 server/output
 server/playlistsOutput
-server/public/*
-server/public/**
+server/public
 output
 playlistsOutput
 *txt
