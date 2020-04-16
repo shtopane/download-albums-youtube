@@ -1,14 +1,17 @@
 {
   "name": "download-albums-youtube-fe",
   "version": "0.0.0",
+  "main": "./server/index.js",
   "scripts": {
     "ng": "ng",
     "start": "npm run build:server && npm run compiled:server:start",
     "start:dev": "ts-node-dev --respawn -- ./server/index.ts",
     "serve": "ts-node ./server/index.ts",
+    "start:fe": "ng serve",
     "compiled:server:start": "node ./server/index.js",
     "build:server": "npx tsc ./server/index.ts",
     "build": "ng build",
+    "build:prod": "ng build --prod",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

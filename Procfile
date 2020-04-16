@@ -1,1 +1,1 @@
-web: npm run compiled:server:start
+web: node ./server/index.js

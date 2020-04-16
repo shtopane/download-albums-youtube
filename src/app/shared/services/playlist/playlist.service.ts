@@ -16,15 +16,18 @@ export class PlaylistService {
   constructor(private http: HttpClient) { }
 
   public downloadYotubePlaylist(url: string): Observable<any> {
-    return this.http.post(`${environment.serverUrl}/download-playlist`, { url });
+    //`${environment.serverUrl}/download-playlist`
+    return this.http.post(`/api/download-playlist`, { url });
   }
 
   public sendPlaylist(url: string, playlist: string): Observable<any> {
-    return this.http.post(`${environment.serverUrl}/songs`, { playlist, url });
+    // `${environment.serverUrl}/songs`
+    return this.http.post(`/api/songs`, { playlist, url });
   }
 
   public getPlaylist(): Observable<Playlist> {
-    return this.http.get<Playlist>(`${environment.serverUrl}/playlist`);
+    // `${environment.serverUrl}/playlist`
+    return this.http.get<Playlist>(`/api/playlist`);
   }
 
   public setLocalPlaylist(playlist: Playlist): void {

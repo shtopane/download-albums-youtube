@@ -10,12 +10,12 @@ const downloadController = new DownloadController();
 const downloadPlaylistController = new DownloadPlaylistController();
 
 /** Pass the correct this to the contorller */
-app.post('/songs', albumController.handleAlbumSlicing.bind(albumController));
-app.get('/playlist', albumController.handlePlaylist.bind(albumController));
+app.post('/api/songs', albumController.handleAlbumSlicing.bind(albumController));
+app.get('/api/playlist', albumController.handlePlaylist.bind(albumController));
 
-app.post('/download-playlist', downloadPlaylistController.handleDownloadPlaylistFromYoutube.bind(downloadPlaylistController));
+app.post('/api/download-playlist', downloadPlaylistController.handleDownloadPlaylistFromYoutube.bind(downloadPlaylistController));
 
 
-app.get('/download', downloadController.handleDownloadSong.bind(downloadController));
-app.get('/downloadZip', downloadController.hanldeDownloadZip.bind(downloadController));
-app.get('/listen', downloadController.handleListenSong.bind(downloadController));
+app.get('/api/download', downloadController.handleDownloadSong.bind(downloadController));
+app.get('/api/downloadZip', downloadController.hanldeDownloadZip.bind(downloadController));
+app.get('/api/listen', downloadController.handleListenSong.bind(downloadController));

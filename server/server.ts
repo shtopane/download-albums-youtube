@@ -5,12 +5,12 @@ import * as path from 'path';
 
 export const app: express.Application = express();
 
-let port = process.env.PORT;
-if (port == null || port === '') {
-  port = '4000';
-}
+let port = process.env.PORT || 4000;
+// if (port == null || port === '') {
+//   port = '4000';
+// }
 
-var corsOptions = {
+const corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
@@ -23,5 +23,5 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.listen(port, () => {
-    console.log('Server on port: ' + port);
+  console.log('Server on port: ' + port);
 });
