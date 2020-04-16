@@ -15,7 +15,7 @@ export class PlaylistService {
 
   constructor(private http: HttpClient) { }
 
-  public downloadYotubePlaylist(url: string): Observable<any> {
+  public downloadYoutubePlaylist(url: string): Observable<any> {
     return this.http.post(`${environment.serverUrl}/download-playlist`, { url });
   }
 
