@@ -70,23 +70,23 @@ export class DownloadPlaylistComponent implements OnInit {
   }
 
   public onDownloadClicked(songInfo: PlaylistItemInfo): void {
-    // const url = `${environment.serverUrl}/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
-    const url = `/api/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    const url = `${environment.serverUrl}/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    // const url = `/api/download?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
 
     window.open(url, '_blank');
   }
 
   public onListenClicked(songInfo: PlaylistItemInfo): void {
     console.log('listen', songInfo.title, songInfo.playlistItemName);
-    // const url = `${environment.serverUrl}/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
-    const url = `/api/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    const url = `${environment.serverUrl}/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    // const url = `/api/listen?isPlaylist=true&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
 
     window.open(url, '_blank');
   }
 
   public onDownloadZipClicked(albumName: string): void {
-    // const url = `${environment.serverUrl}/downloadZip?isPlaylist=true&albumName=${encodeURIComponent(albumName)}`;
-    const url = `/api/downloadZip?isPlaylist=true&albumName=${encodeURIComponent(albumName)}`;
+    const url = `${environment.serverUrl}/downloadZip?isPlaylist=true&albumName=${encodeURIComponent(albumName)}`;
+    // const url = `/api/downloadZip?isPlaylist=true&albumName=${encodeURIComponent(albumName)}`;
 
     window.open(url, '_blank');
   }
