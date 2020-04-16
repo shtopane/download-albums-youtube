@@ -45,19 +45,23 @@ export class AlbumComponent implements OnInit, AfterViewInit, OnDestroy {
 
   public onDownloadClicked(songInfo: PlaylistItemInfo): void {
     console.log(songInfo);
-    encodeURIComponent
-    const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    // const url = `${environment.serverUrl}/download?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    const url = `/api/download?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
     window.open(url, '_blank');
   }
 
   public onListenClicked(songInfo: PlaylistItemInfo): void {
     console.log('listen', songInfo.title, songInfo.playlistItemName);
-    const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    // const url = `${environment.serverUrl}/listen?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+    const url = `/api/listen?isPlaylist=false&albumName=${encodeURIComponent(songInfo.title)}&songName=${encodeURIComponent(songInfo.playlistItemName)}`;
+
     window.open(url, '_blank');
   }
 
   public onDownloadZipClicked(albumName: string): void {
-    const url = `${environment.serverUrl}/downloadZip?isPlaylist=false&albumName=${encodeURIComponent(albumName)}`;
+    // const url = `${environment.serverUrl}/downloadZip?isPlaylist=false&albumName=${encodeURIComponent(albumName)}`;
+    const url = `/api/downloadZip?isPlaylist=false&albumName=${encodeURIComponent(albumName)}`;
+
     window.open(url, '_blank');
   }
 
