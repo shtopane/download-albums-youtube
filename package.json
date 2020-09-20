@@ -6,6 +6,7 @@
     "ng": "ng",
     "postinstall": "npm run build:server",
     "start": "node ./server/index.js",
+    "start:both": "npm run build && npm start",
     "start:dev": "ts-node-dev --respawn -- ./server/index.ts",
     "start:fe": "ng serve --configuration=local",
     "build:server": "npx tsc ./server/index.ts",

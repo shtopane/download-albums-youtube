@@ -16,7 +16,7 @@ export class AlbumController {
     protected thumbnailUrl: string;
     protected duration: number;
     protected lengthInSeconds: string;
-    protected videoLenghtObject: { hours: number; minutes: number; seconds: number; };
+    protected videoLengthObject: { hours: number; minutes: number; seconds: number; };
 
     protected fileTitle = 'album';
     protected playlistArr: PlaylistItem[] = [];
@@ -71,7 +71,7 @@ export class AlbumController {
         }
 
         console.log('length of video', this.lengthInSeconds)
-        this.videoLenghtObject = utils.getHoursFromSeconds(this.lengthInSeconds);
+        this.videoLengthObject = utils.getHoursFromSeconds(this.lengthInSeconds);
 
         const rootOutDir = 'output';
         if (!fs.existsSync(rootOutDir)) {
@@ -163,7 +163,7 @@ export class AlbumController {
     }
 
     protected onError(err: any): void {
-        console.log('error happended: ', err);
+        console.log('error happened: ', err);
         this.res.status(500).json({ errorMessage: err.message, success: false });
     }
 
@@ -192,7 +192,7 @@ export class AlbumController {
 
     protected noVideoInfoErrorHandle(): void {
         this.res.status(500).json({
-            erroMessage: 'No video info for this file. Please, select another one',
+            errorMessage: 'No video info for this file. Please, select another one',
             success: false
         } as BaseResponse);
     }
@@ -213,8 +213,8 @@ export class AlbumController {
 
     protected generateNextDuration(lengthInSeconds: string): { nextDuration: number; startTime: string } {
         /** Put the end song endTime to be end of the file */
-        const hoursString = `${this.videoLenghtObject.hours > 0 ? this.videoLenghtObject.hours + ':' : ''}`;
-        const endSongTimeStr = `${hoursString}${this.videoLenghtObject.minutes}:${this.videoLenghtObject.seconds}`;
+        const hoursString = `${this.videoLengthObject.hours > 0 ? this.videoLengthObject.hours + ':' : ''}`;
+        const endSongTimeStr = `${hoursString}${this.videoLengthObject.minutes}:${this.videoLengthObject.seconds}`;
 
         let startTime = this.playlistArr[this.counter].startTime;
         let endTime = this.playlistArr[this.counter + 1]

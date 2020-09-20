@@ -52,8 +52,8 @@ export class DownloadSliceAlbumsFormComponent implements OnInit {
           this.loaderService.hideLoader();
           if (res.success) {
             this.playlistService.getPlaylist()
-              .subscribe((res: PlaylistResponse) => {
-                this.playlistService.setLocalPlaylist({ albumName: res.albumName, playlist: res.playlist });
+              .subscribe((playlistResponse: PlaylistResponse) => {
+                this.playlistService.setLocalPlaylist({ albumName: playlistResponse.albumName, playlist: playlistResponse.playlist });
                 this.router.navigate(['/album']);
               });
           }

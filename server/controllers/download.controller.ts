@@ -46,7 +46,7 @@ export class DownloadController {
         });
     }
 
-    public hanldeDownloadZip(req: express.Request, res: express.Response, next: express.NextFunction) {
+    public handleDownloadZip(req: express.Request, res: express.Response, next: express.NextFunction) {
         const albumName: string = req.query.albumName;
         const isDownloadingPlaylist: string = req.query.isPlaylist;
         const rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
@@ -60,11 +60,11 @@ export class DownloadController {
             fs.mkdirSync(zipDir);
         }
 
-        const albumZiped = fs.createWriteStream(`${zipDir}/${albumName}.zip`);
+        const albumZipped = fs.createWriteStream(`${zipDir}/${albumName}.zip`);
 
         // listen for all archive data to be written
         // 'close' event is fired only when a file descriptor is involved
-        albumZiped.on('close', function () {
+        albumZipped.on('close', function () {
             console.log(zip.pointer() + ' total bytes');
             console.log('archiver has been finalized and the output file descriptor has closed.');
             /** If I remove this, the download zip always has the same name */
@@ -99,7 +99,7 @@ export class DownloadController {
         });
 
         // pipe archive data to the file
-        zip.pipe(albumZiped);
+        zip.pipe(albumZipped);
         // append files from a sub-directory and naming it with the album name within the archive
         zip.directory(`${rootFolder}/${albumName}`, `${albumName}`);
         // finalize the archive (ie we are done appending files but streams have to finish yet)

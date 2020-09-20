@@ -23,7 +23,7 @@ export class PlaylistItemComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log('in track item ALBUMNAME - TRACK', this.albumName, this.playlistItem);
+    console.log('in track item ALBUM NAME - TRACK', this.albumName, this.playlistItem);
   }
 
   public onListenClicked() {

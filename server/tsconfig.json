@@ -24,7 +24,7 @@
                 "./controllers/*"
             ],
             "constants/*": [
-                "./contstants/*"
+                "./constants/*"
             ],
             "models/*": [
                 "./models/*"

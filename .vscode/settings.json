@@ -1,8 +1,12 @@
 {
     "cSpell.words": [
-        "Youtube"
+        "Youtube",
+        "ytdl"
     ],
     "cSpell.ignoreWords": [
-        "respawn"
+        "poppin",
+        "respawn",
+        "seektime",
+        "ytpl"
     ]
 }

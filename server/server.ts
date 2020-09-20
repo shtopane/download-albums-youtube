@@ -6,9 +6,6 @@ import * as path from 'path';
 export const app: express.Application = express();
 
 let port = process.env.PORT || 4000;
-// if (port == null || port === '') {
-//   port = '4000';
-// }
 
 const corsOptions = {
   origin: '*',
