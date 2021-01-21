@@ -156,6 +156,9 @@ var Utils = /** @class */ (function () {
         }
         return result;
     };
+    Utils.prototype.makeStringSafeForFolderCreate = function (str) {
+        return str.replace(/[:$\\$//\s]/g, '');
+    };
     return Utils;
 }());
 var utils = new Utils();

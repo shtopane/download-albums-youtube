@@ -1,6 +1,6 @@
 <header>
     <a href="#side-menu" (click)="onSideMenuClick($event);" uk-icon="menu" uk-toggle></a>
-    <h1>Youtube Album Downloader</h1>
+    <h1>YAD</h1>
 </header>
 
 <div id="side-menu" uk-offcanvas>
@@ -10,6 +10,8 @@
                 true}" routerLink="/playlist">Slice Youtube Albums</a></li>
             <li><a routerLinkActive="uk-active" [routerLinkActiveOptions]="{exact:
                 true}" routerLink="/download-playlist">Download Youtube Playlists</a></li>
+                <li><a routerLinkActive="uk-active" [routerLinkActiveOptions]="{exact:
+                    true}" routerLink="/single-song">Download Single Song</a></li>
         </ul>
     </div>
 </div>

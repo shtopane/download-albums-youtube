@@ -39,6 +39,7 @@ var fs = require("fs");
 var ytpl = require("ytpl");
 var ytdl = require("ytdl-core");
 var ffmpeg = require("fluent-ffmpeg");
+var utils_1 = require("../utils/utils");
 var DownloadPlaylistController = /** @class */ (function () {
     function DownloadPlaylistController() {
         this.counter = 0;
@@ -49,7 +50,7 @@ var DownloadPlaylistController = /** @class */ (function () {
     }
     DownloadPlaylistController.prototype.handleDownloadPlaylistFromYoutube = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var url, result, err_1, firstSongTitle, firstSongUrl, generateNextSongPath, folder;
+            var url, result, err_1, firstSongSafeTitle, firstSongTitle, firstSongUrl, generateNextSongPath, safeTitle, folder;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -71,15 +72,20 @@ var DownloadPlaylistController = /** @class */ (function () {
                         });
                         return [2 /*return*/];
                     case 4:
-                        console.log(result);
+                        console.log('RESULT', result);
                         this.youtubePlaylistData = result.items;
-                        if (result.total_items > 0) {
-                            firstSongTitle = result.items[0].title;
-                            firstSongUrl = result.items[0].url_simple;
+                        if (result.estimatedItemCount > 0) {
+                            firstSongSafeTitle = utils_1["default"].makeStringSafeForFolderCreate(result.items[0].title) // result.items[0].title.replace(/[:$\\$//]/g, '');
+                            ;
+                            firstSongTitle = firstSongSafeTitle;
+                            firstSongUrl = result.items[0].shortUrl;
                             generateNextSongPath = void 0;
                             if (result.title) {
-                                this.playlistTitle = result.title;
-                                folder = "" + result.title;
+                                safeTitle = utils_1["default"].makeStringSafeForFolderCreate(result.title) // result.title.replace(/[:$\\$//]/g, '');
+                                ;
+                                console.log('SAFE TITLE', safeTitle);
+                                this.playlistTitle = safeTitle;
+                                folder = "" + safeTitle;
                                 generateNextSongPath = this.generateSongPath(firstSongTitle, folder);
                             }
                             else {
@@ -99,7 +105,10 @@ var DownloadPlaylistController = /** @class */ (function () {
     };
     DownloadPlaylistController.prototype.download = function (url, songPath, funcToGenerateNextSongPath) {
         var _this = this;
+        console.log('[DOWNLOAD] url', url);
+        console.log('[DOWNLOAD] songPath', songPath);
         var stream = ytdl(url);
+        console.log(stream);
         var outStream = fs.createWriteStream(songPath);
         ffmpeg(stream)
             .toFormat('mp3')
@@ -108,8 +117,9 @@ var DownloadPlaylistController = /** @class */ (function () {
             console.log('song downloaded!', songPath);
             _this.counter++;
             if (_this.youtubePlaylistData[_this.counter]) {
-                var nextUrl = _this.youtubePlaylistData[_this.counter].url_simple;
-                var nextSongPath = funcToGenerateNextSongPath(_this.youtubePlaylistData[_this.counter].title);
+                var nextUrl = _this.youtubePlaylistData[_this.counter].shortUrl;
+                var nextSongSafeTitle = utils_1["default"].makeStringSafeForFolderCreate(_this.youtubePlaylistData[_this.counter].title);
+                var nextSongPath = funcToGenerateNextSongPath(nextSongSafeTitle);
                 _this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
             }
             else {
@@ -118,7 +128,7 @@ var DownloadPlaylistController = /** @class */ (function () {
                     return {
                         startTime: item.duration,
                         name: item.title,
-                        thumbnail: item.thumbnail
+                        thumbnail: item.bestThumbnail ? item.bestThumbnail.url : null
                     };
                 });
                 var playlistResponse = {

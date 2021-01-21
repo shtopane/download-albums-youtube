@@ -52,20 +52,19 @@ export class AlbumController {
         let chosenFormat: ytdl.videoFormat | string;
 
         const videoInfo: ytdl.videoInfo = await ytdl.getInfo(this.url);
-
+        console.log('VIDEO INFO',videoInfo);
         if (videoInfo) {
             formats = videoInfo.formats;
             chosenFormat = <ytdl.videoFormat>ytdl.chooseFormat(formats, {});
             /** TODO: Make checks for undefined! */
-            this.fileTitle = videoInfo.title || videoInfo.player_response.videoDetails.title;
-            /** videoInfo.videoDetails ? videoInfo.videoDetails.thumbnail: videoInfo.thumbnail_url; */
+            this.fileTitle = videoInfo.player_response.videoDetails.title; // videoInfo.title || videoInfo.player_response.videoDetails.title;
             /** TODO: Make checks for undefined! */
             const thumbnail = videoInfo.player_response.videoDetails.thumbnail && videoInfo.player_response.videoDetails.thumbnail.thumbnails.length ?
                 videoInfo.player_response.videoDetails.thumbnail.thumbnails[0].url : undefined;
 
             this.thumbnailUrl = videoInfo.thumbnail_url || thumbnail;
             /** TODO: Make checks for undefined! */
-            this.lengthInSeconds = videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
+            this.lengthInSeconds = videoInfo.player_response.videoDetails.lengthSeconds + '';// videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
         } else {
             this.noVideoInfoErrorHandle();
         }

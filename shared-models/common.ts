@@ -6,7 +6,7 @@ export type BaseResponse = {
 export type PlaylistResponse = BaseResponse & Playlist;
 
 export interface PlaylistItem {
-    startTime: string;
+    startTime?: string;
     name: string;
     thumbnail?: string;
 }

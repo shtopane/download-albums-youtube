@@ -5,6 +5,7 @@ import * as ytdl from 'ytdl-core';
 import * as ffmpeg from 'fluent-ffmpeg';
 
 import { PlaylistResponse, PlaylistItem } from '../../shared-models/common';
+import utils from '../utils/utils';
 
 type YoutubePlaylistItem = {
     author?: {
@@ -28,7 +29,7 @@ export class DownloadPlaylistController {
     protected counter = 0;
     protected playlistTitle: string;
     protected playlistInfo: ytdl.videoInfo;
-    protected youtubePlaylistData: YoutubePlaylistItem[];
+    protected youtubePlaylistData: ytpl.Item[];
     protected rootDir = 'playlistsOutput';
     protected startTime: number;
 
@@ -43,7 +44,7 @@ export class DownloadPlaylistController {
         this.req = req;
 
         const { url } = this.req.body;
-        let result: ytpl.result;
+        let result: ytpl.Result;
 
         try {
             result = await ytpl(url);
@@ -55,18 +56,21 @@ export class DownloadPlaylistController {
             return;
         }
 
-        console.log(result);
+        console.log('RESULT',result);
         this.youtubePlaylistData = result.items;
 
-        if (result.total_items > 0) {
-            const firstSongTitle = result.items[0].title;
-            const firstSongUrl = result.items[0].url_simple;
+        if (result.estimatedItemCount > 0) {
+            let firstSongSafeTitle = utils.makeStringSafeForFolderCreate(result.items[0].title)// result.items[0].title.replace(/[:$\\$//]/g, '');
+            const firstSongTitle = firstSongSafeTitle; //result.items[0].title;
+            const firstSongUrl = result.items[0].shortUrl;
 
             let generateNextSongPath: (s: string) => string;
 
             if (result.title) {
-                this.playlistTitle = result.title;
-                const folder = `${result.title}`;
+                const safeTitle = utils.makeStringSafeForFolderCreate(result.title)// result.title.replace(/[:$\\$//]/g, '');
+                console.log('SAFE TITLE', safeTitle);
+                this.playlistTitle = safeTitle;
+                const folder = `${safeTitle}`;
 
                 generateNextSongPath = this.generateSongPath(firstSongTitle, folder);
 
@@ -85,19 +89,21 @@ export class DownloadPlaylistController {
     }
 
     protected download(url: string, songPath: string, funcToGenerateNextSongPath): void {
+        console.log('[DOWNLOAD] url', url);
+        console.log('[DOWNLOAD] songPath', songPath);
         const stream = ytdl(url);
+        console.log(stream);
         const outStream = fs.createWriteStream(songPath);
-
         ffmpeg(stream)
             .toFormat('mp3')
             .audioBitrate(160)
             .on('end', () => {
                 console.log('song downloaded!', songPath);
                 this.counter++;
-
                 if (this.youtubePlaylistData[this.counter]) {
-                    let nextUrl = this.youtubePlaylistData[this.counter].url_simple;
-                    let nextSongPath = funcToGenerateNextSongPath(this.youtubePlaylistData[this.counter].title);
+                    let nextUrl = this.youtubePlaylistData[this.counter].shortUrl;
+                    let nextSongSafeTitle = utils.makeStringSafeForFolderCreate(this.youtubePlaylistData[this.counter].title)
+                    let nextSongPath = funcToGenerateNextSongPath(nextSongSafeTitle);
 
                     this.download(nextUrl, nextSongPath, funcToGenerateNextSongPath);
                 } else {
@@ -107,7 +113,7 @@ export class DownloadPlaylistController {
                         return {
                             startTime: item.duration,
                             name: item.title,
-                            thumbnail: item.thumbnail
+                            thumbnail: item.bestThumbnail ? item.bestThumbnail.url : null
                         } as PlaylistItem;
                     });
 

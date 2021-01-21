@@ -1,0 +1,7 @@
+<form [formGroup]="downloadSingleSongForm">
+  <app-url-input controlName="url" [parent]="downloadSingleSongForm" placeholder="Put a Youtube url of a single song"
+    (send)="onSubmit();"></app-url-input>
+</form>
+<app-list-playlist [playlist]="playlist" (listen)="onListenClicked($event);" (download)="onDownloadClicked($event);"
+  (downloadZip)="onDownloadZipClicked($event);">
+</app-list-playlist>

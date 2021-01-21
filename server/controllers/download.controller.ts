@@ -27,6 +27,29 @@ export class DownloadController {
         });
     }
 
+
+    public handleDownloadSingleSong(req: express.Request, res: express.Response) {
+        const songName: string = req.query.songName;
+        const format: string = req.query.format || 'mp3';
+        const isDownloadingPlaylist: string = req.query.isPlaylist;
+
+        const rootFolder = 'singleSongs';
+        const folder = `${rootFolder}/${songName}.${format}`;
+        const file = `${songName}.mp3`;
+
+        // res.attachment(`output/${albumName}/${songName}.mp3`);
+        res.header(`Content-Disposition', 'attachment; filename=${rootFolder}/${songName}.${format}`);
+        res.download(folder, file, (err) => {
+            if (!err) {
+                console.log('competed!');
+                res.status(200);
+            } else {
+                console.log('error happened: ', err);
+                res.status(500).json({ errorMessage: err.message, success: false } as BaseResponse)
+            }
+        });
+    }
+
     public handleListenSong(req: express.Request, res: express.Response, next: express.NextFunction) {
         const albumName: string = req.query.albumName;
         const songName: string = req.query.songName;

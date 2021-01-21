@@ -183,6 +183,10 @@ class Utils {
 
         return result;
     }
+
+    public makeStringSafeForFolderCreate(str: string):string{
+        return str.replace(/[:$\\$//\s]/g, '');
+    }
 }
 
 

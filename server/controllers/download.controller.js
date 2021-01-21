@@ -25,6 +25,26 @@ var DownloadController = /** @class */ (function () {
             }
         });
     };
+    DownloadController.prototype.handleDownloadSingleSong = function (req, res) {
+        var songName = req.query.songName;
+        var format = req.query.format || 'mp3';
+        var isDownloadingPlaylist = req.query.isPlaylist;
+        var rootFolder = 'singleSongs';
+        var folder = rootFolder + "/" + songName + "." + format;
+        var file = songName + ".mp3";
+        // res.attachment(`output/${albumName}/${songName}.mp3`);
+        res.header("Content-Disposition', 'attachment; filename=" + rootFolder + "/" + songName + "." + format);
+        res.download(folder, file, function (err) {
+            if (!err) {
+                console.log('competed!');
+                res.status(200);
+            }
+            else {
+                console.log('error happened: ', err);
+                res.status(500).json({ errorMessage: err.message, success: false });
+            }
+        });
+    };
     DownloadController.prototype.handleListenSong = function (req, res, next) {
         var albumName = req.query.albumName;
         var songName = req.query.songName;
@@ -42,7 +62,7 @@ var DownloadController = /** @class */ (function () {
             }
         });
     };
-    DownloadController.prototype.hanldeDownloadZip = function (req, res, next) {
+    DownloadController.prototype.handleDownloadZip = function (req, res, next) {
         var albumName = req.query.albumName;
         var isDownloadingPlaylist = req.query.isPlaylist;
         var rootFolder = isDownloadingPlaylist === 'true' ? 'playlistsOutput' : 'output';
@@ -53,10 +73,10 @@ var DownloadController = /** @class */ (function () {
         if (!fs.existsSync(zipDir)) {
             fs.mkdirSync(zipDir);
         }
-        var albumZiped = fs.createWriteStream(zipDir + "/" + albumName + ".zip");
+        var albumZipped = fs.createWriteStream(zipDir + "/" + albumName + ".zip");
         // listen for all archive data to be written
         // 'close' event is fired only when a file descriptor is involved
-        albumZiped.on('close', function () {
+        albumZipped.on('close', function () {
             console.log(zip.pointer() + ' total bytes');
             console.log('archiver has been finalized and the output file descriptor has closed.');
             /** If I remove this, the download zip always has the same name */
@@ -89,7 +109,7 @@ var DownloadController = /** @class */ (function () {
             throw err;
         });
         // pipe archive data to the file
-        zip.pipe(albumZiped);
+        zip.pipe(albumZipped);
         // append files from a sub-directory and naming it with the album name within the archive
         zip.directory(rootFolder + "/" + albumName, "" + albumName);
         // finalize the archive (ie we are done appending files but streams have to finish yet)

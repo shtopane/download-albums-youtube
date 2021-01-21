@@ -19,6 +19,10 @@ export class PlaylistService {
     return this.http.post(`${environment.serverUrl}/download-playlist`, { url });
   }
 
+  public downloadSingleSong(url: string): Observable<any> {
+    return this.http.post(`${environment.serverUrl}/single-song`, { url })
+  }
+
   public sendPlaylist(url: string, playlist: string): Observable<any> {
     return this.http.post(`${environment.serverUrl}/songs`, { playlist, url });
   }
@@ -40,4 +44,7 @@ export class PlaylistService {
     }
     return of({ ...this.playlist });
   }
+
+
+  
 }

@@ -76,22 +76,23 @@ var AlbumController = /** @class */ (function () {
                         return [4 /*yield*/, ytdl.getInfo(this.url)];
                     case 1:
                         videoInfo = _a.sent();
+                        console.log('VIDEO INFO', videoInfo);
                         if (videoInfo) {
                             formats = videoInfo.formats;
                             chosenFormat = ytdl.chooseFormat(formats, {});
                             /** TODO: Make checks for undefined! */
-                            this.fileTitle = videoInfo.title || videoInfo.player_response.videoDetails.title;
+                            this.fileTitle = videoInfo.player_response.videoDetails.title; // videoInfo.title || videoInfo.player_response.videoDetails.title;
                             thumbnail = videoInfo.player_response.videoDetails.thumbnail && videoInfo.player_response.videoDetails.thumbnail.thumbnails.length ?
                                 videoInfo.player_response.videoDetails.thumbnail.thumbnails[0].url : undefined;
                             this.thumbnailUrl = videoInfo.thumbnail_url || thumbnail;
                             /** TODO: Make checks for undefined! */
-                            this.lengthInSeconds = videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
+                            this.lengthInSeconds = videoInfo.player_response.videoDetails.lengthSeconds + ''; // videoInfo.length_seconds || videoInfo.player_response.videoDetails.lengthSeconds + '';
                         }
                         else {
                             this.noVideoInfoErrorHandle();
                         }
                         console.log('length of video', this.lengthInSeconds);
-                        this.videoLenghtObject = utils_1["default"].getHoursFromSeconds(this.lengthInSeconds);
+                        this.videoLengthObject = utils_1["default"].getHoursFromSeconds(this.lengthInSeconds);
                         rootOutDir = 'output';
                         if (!fs.existsSync(rootOutDir)) {
                             fs.mkdirSync(rootOutDir);
@@ -166,7 +167,7 @@ var AlbumController = /** @class */ (function () {
             .writeToStream(stream, { end: true });
     };
     AlbumController.prototype.onError = function (err) {
-        console.log('error happended: ', err);
+        console.log('error happened: ', err);
         this.res.status(500).json({ errorMessage: err.message, success: false });
     };
     AlbumController.prototype.onEnd = function () {
@@ -192,7 +193,7 @@ var AlbumController = /** @class */ (function () {
     };
     AlbumController.prototype.noVideoInfoErrorHandle = function () {
         this.res.status(500).json({
-            erroMessage: 'No video info for this file. Please, select another one',
+            errorMessage: 'No video info for this file. Please, select another one',
             success: false
         });
     };
@@ -209,8 +210,8 @@ var AlbumController = /** @class */ (function () {
     };
     AlbumController.prototype.generateNextDuration = function (lengthInSeconds) {
         /** Put the end song endTime to be end of the file */
-        var hoursString = "" + (this.videoLenghtObject.hours > 0 ? this.videoLenghtObject.hours + ':' : '');
-        var endSongTimeStr = "" + hoursString + this.videoLenghtObject.minutes + ":" + this.videoLenghtObject.seconds;
+        var hoursString = "" + (this.videoLengthObject.hours > 0 ? this.videoLengthObject.hours + ':' : '');
+        var endSongTimeStr = "" + hoursString + this.videoLengthObject.minutes + ":" + this.videoLengthObject.seconds;
         var startTime = this.playlistArr[this.counter].startTime;
         var endTime = this.playlistArr[this.counter + 1]
             /** current song ends where the next begins */

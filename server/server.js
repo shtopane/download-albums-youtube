@@ -6,9 +6,6 @@ var bodyParser = require("body-parser");
 var path = require("path");
 exports.app = express();
 var port = process.env.PORT || 4000;
-// if (port == null || port === '') {
-//   port = '4000';
-// }
 var corsOptions = {
     origin: '*',
     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
